@@ -1006,6 +1006,69 @@
     0 0 32px color-mix(in srgb, var(--category-colour) 12%, transparent);
 }
 
+.result-card--best {
+  isolation: isolate;
+  overflow: hidden;
+  border-color: color-mix(in srgb, var(--category-colour) 78%, white 10%);
+  animation: best-result-breathe 4.2s ease-in-out infinite;
+}
+
+.result-card--best::before,
+.result-card--best::after {
+  position: absolute;
+  z-index: 0;
+  content: "";
+  pointer-events: none;
+}
+
+.result-card--best::before {
+  inset: 0;
+  background:
+    radial-gradient(circle at 12% 50%, color-mix(in srgb, var(--category-colour) 18%, transparent), transparent 36%),
+    linear-gradient(110deg, color-mix(in srgb, var(--category-colour) 8%, transparent), transparent 58%);
+  opacity: 0.72;
+}
+
+.result-card--best::after {
+  inset: -24% -30%;
+  background:
+    radial-gradient(circle at 25% 50%, color-mix(in srgb, var(--category-colour) 29%, transparent), transparent 36%),
+    radial-gradient(circle at 72% 42%, color-mix(in srgb, var(--category-colour) 18%, white 4%), transparent 32%);
+  opacity: 0.84;
+  transform: translateX(-30%) scale(1.14);
+  animation: best-result-gradient 4s ease-in-out infinite alternate;
+}
+
+.result-card--best > * {
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes best-result-breathe {
+  0%,
+  100% {
+    box-shadow:
+      inset 0 0 30px color-mix(in srgb, var(--category-colour) 6%, transparent),
+      0 0 22px color-mix(in srgb, var(--category-colour) 10%, transparent);
+  }
+
+  50% {
+    box-shadow:
+      inset 0 0 48px color-mix(in srgb, var(--category-colour) 12%, transparent),
+      0 0 38px color-mix(in srgb, var(--category-colour) 22%, transparent);
+  }
+}
+
+@keyframes best-result-gradient {
+  from {
+    transform: translateX(-30%) scale(1.14);
+  }
+
+  to {
+    transform: translateX(30%) scale(1.24);
+  }
+}
+
 .result-card__icon {
   display: grid;
   width: 3rem;
@@ -1032,6 +1095,34 @@
   top: 1.2rem;
   right: 1.2rem;
   color: var(--category-colour);
+}
+
+.result-card--best .result-card__score {
+  top: 0.9rem;
+  right: 0.9rem;
+  padding: 0.42rem 0.58rem;
+  border: 1px solid color-mix(in srgb, var(--category-colour) 65%, white 8%);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--category-colour) 14%, #0b0c21);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    0 0 14px color-mix(in srgb, var(--category-colour) 24%, transparent);
+  animation: best-score-pulse 3s ease-in-out infinite;
+}
+
+@keyframes best-score-pulse {
+  0%,
+  100% {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.1),
+      0 0 12px color-mix(in srgb, var(--category-colour) 20%, transparent);
+  }
+
+  50% {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.16),
+      0 0 23px color-mix(in srgb, var(--category-colour) 42%, transparent);
+  }
 }
 
 .result-card__price {
@@ -1177,6 +1268,131 @@
   border-bottom: 1px solid rgba(148, 135, 202, 0.14);
   background: rgba(8, 9, 28, 0.88);
   box-shadow: 0 12px 28px rgba(3, 4, 16, 0.18);
+}
+
+.result-category-filter {
+  display: grid;
+  grid-column: 1 / -1;
+  gap: 0.75rem;
+}
+
+.result-category-filter__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.result-category-filter__header > strong {
+  color: #e8e4f6;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.result-category-filter__header > button {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #918ca6;
+  font: inherit;
+  font-size: 0.64rem;
+  font-weight: 750;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    color 220ms ease,
+    text-shadow 220ms ease;
+}
+
+.result-category-filter__header > button:hover,
+.result-category-filter__header > button:focus-visible,
+.result-category-filter__header > button[aria-pressed="true"] {
+  color: var(--active-colour);
+  text-shadow: 0 0 12px color-mix(in srgb, var(--active-colour) 38%, transparent);
+  outline: none;
+}
+
+.result-category-filter__options {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.55rem;
+}
+
+.result-category-option {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.55rem;
+  align-items: center;
+  min-width: 0;
+  min-height: 3.15rem;
+  padding: 0.55rem 0.65rem;
+  overflow: hidden;
+  border: 1px solid rgba(143, 137, 177, 0.18);
+  border-radius: 0.65rem;
+  background: rgba(14, 15, 39, 0.54);
+  color: #938fa5;
+  cursor: pointer;
+  filter: grayscale(0.88) saturate(0.25);
+  opacity: 0.5;
+  transition:
+    opacity 280ms ease,
+    filter 280ms ease,
+    color 280ms ease,
+    border-color 280ms ease,
+    background 280ms ease,
+    box-shadow 280ms ease,
+    transform 280ms ease;
+}
+
+.result-category-option input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.result-category-option > span:last-child {
+  overflow: hidden;
+  font-size: 0.64rem;
+  font-weight: 750;
+  line-height: 1.25;
+  text-overflow: ellipsis;
+}
+
+.result-category-option__icon {
+  display: grid;
+  width: 1.85rem;
+  height: 1.85rem;
+  place-items: center;
+  border: 1px solid currentColor;
+  border-radius: 0.48rem;
+}
+
+.result-category-option--selected {
+  border-color: color-mix(in srgb, var(--category-colour) 44%, transparent);
+  background: color-mix(in srgb, var(--category-colour) 8%, rgba(14, 15, 39, 0.72));
+  box-shadow: inset 0 0 22px color-mix(in srgb, var(--category-colour) 5%, transparent);
+  color: var(--category-colour);
+  filter: none;
+  opacity: 1;
+}
+
+.result-category-option:hover,
+.result-category-option:focus-within {
+  border-color: color-mix(in srgb, var(--category-colour) 62%, transparent);
+  opacity: 0.86;
+  outline: none;
+  transform: translateY(-1px);
+}
+
+.result-category-option--selected:hover,
+.result-category-option--selected:focus-within {
+  opacity: 1;
 }
 
 .result-filter {
@@ -1389,6 +1605,12 @@
   .selected-course-type-emblem,
   .selected-course-type-emblem::before,
   .selected-course-type-emblem__lens {
+    animation: none;
+  }
+
+  .result-card--best,
+  .result-card--best::after,
+  .result-card--best .result-card__score {
     animation: none;
   }
 

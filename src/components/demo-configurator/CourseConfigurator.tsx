@@ -100,17 +100,25 @@ function ResultCourse({
   item,
   ctaLabel,
   primary = false,
+  best = false,
 }: {
   item: QuizResult["primary"];
   ctaLabel: string;
   primary?: boolean;
+  best?: boolean;
 }) {
   const categoryId = item.category.id as VisualCategoryId;
   const visual = getVisualCategory(categoryId);
 
   return (
     <article
-      className={primary ? "result-card result-card--primary" : "result-card"}
+      className={[
+        "result-card",
+        primary ? "result-card--primary" : "",
+        best ? "result-card--best" : "",
+      ]
+        .filter(Boolean)
+        .join(" ")}
       style={{ "--category-colour": visual.cssColour } as React.CSSProperties}
     >
       <span className="result-card__icon">
@@ -269,6 +277,9 @@ export default function CourseConfigurator() {
   const [showAllResults, setShowAllResults] = useState(false);
   const [minimumPoints, setMinimumPoints] = useState(0);
   const [maximumPrice, setMaximumPrice] = useState(0);
+  const [selectedResultCategoryIds, setSelectedResultCategoryIds] = useState<
+    string[]
+  >([]);
   const [pulseKey, setPulseKey] = useState(0);
   const [effectColour, setEffectColour] = useState(0x9b6cff);
   const effectTargetRef = useRef<HTMLButtonElement | null>(null);
@@ -306,12 +317,7 @@ export default function CourseConfigurator() {
       quiz.scores,
       quiz.routingScores,
     );
-  }, [
-    quiz.selectedCourseTypeId,
-    quiz.result,
-    quiz.scores,
-    quiz.routingScores,
-  ]);
+  }, [quiz.selectedCourseTypeId, quiz.result, quiz.scores, quiz.routingScores]);
 
   const resultFilterBounds = useMemo(() => {
     const pointValues = allRankedCourses.map((item) => item.score);
@@ -328,9 +334,16 @@ export default function CourseConfigurator() {
     () =>
       allRankedCourses.filter(
         (item) =>
-          item.score >= minimumPoints && item.course.price <= maximumPrice,
+          selectedResultCategoryIds.includes(item.category.id) &&
+          item.score >= minimumPoints &&
+          item.course.price <= maximumPrice,
       ),
-    [allRankedCourses, minimumPoints, maximumPrice],
+    [
+      allRankedCourses,
+      minimumPoints,
+      maximumPrice,
+      selectedResultCategoryIds,
+    ],
   );
 
   const getRangeProgress = (value: number, minimum: number, maximum: number) =>
@@ -555,12 +568,26 @@ export default function CourseConfigurator() {
   const openAllResults = () => {
     setMinimumPoints(resultFilterBounds.minimumPoints);
     setMaximumPrice(resultFilterBounds.maximumPrice);
+    setSelectedResultCategoryIds(
+      activeCourseType?.categories.map((category) => category.id) ?? [],
+    );
     setShowAllResults(true);
   };
 
   const resetResultFilters = () => {
     setMinimumPoints(resultFilterBounds.minimumPoints);
     setMaximumPrice(resultFilterBounds.maximumPrice);
+    setSelectedResultCategoryIds(
+      activeCourseType?.categories.map((category) => category.id) ?? [],
+    );
+  };
+
+  const toggleResultCategory = (categoryId: string) => {
+    setSelectedResultCategoryIds((current) =>
+      current.includes(categoryId)
+        ? current.filter((id) => id !== categoryId)
+        : [...current, categoryId],
+    );
   };
 
   const closeAllResults = () => {
@@ -811,6 +838,7 @@ export default function CourseConfigurator() {
           item={quiz.result.primary}
           ctaLabel={activeCourseType.resultTemplate.cta.label}
           primary
+          best
         />
 
         {quiz.result.alternatives.length > 0 && (
@@ -839,7 +867,7 @@ export default function CourseConfigurator() {
             type="button"
             onClick={openAllResults}
           >
-            Pokaż więcej rezultatów
+            Dostosuj rekomendacje
           </button>
           <button
             className="restart-button restart-button--danger"
@@ -1116,6 +1144,65 @@ export default function CourseConfigurator() {
               </button>
             </header>
             <div className="results-sheet__filters">
+              <div
+                className="result-category-filter"
+                role="group"
+                aria-labelledby="result-category-filter-title"
+              >
+                <div className="result-category-filter__header">
+                  <strong id="result-category-filter-title">Obszary</strong>
+                  <button
+                    type="button"
+                    aria-pressed={
+                      selectedResultCategoryIds.length ===
+                      activeCourseType.categories.length
+                    }
+                    onClick={() =>
+                      setSelectedResultCategoryIds(
+                        activeCourseType.categories.map(
+                          (category) => category.id,
+                        ),
+                      )
+                    }
+                  >
+                    Wszystkie
+                  </button>
+                </div>
+                <div className="result-category-filter__options">
+                  {activeCourseType.categories.map((category) => {
+                    const categoryId = category.id as VisualCategoryId;
+                    const visual = getVisualCategory(categoryId);
+                    const selected = selectedResultCategoryIds.includes(
+                      category.id,
+                    );
+                    return (
+                      <label
+                        key={category.id}
+                        className={
+                          selected
+                            ? "result-category-option result-category-option--selected"
+                            : "result-category-option"
+                        }
+                        style={
+                          {
+                            "--category-colour": visual.cssColour,
+                          } as React.CSSProperties
+                        }
+                      >
+                        <input
+                          type="checkbox"
+                          checked={selected}
+                          onChange={() => toggleResultCategory(category.id)}
+                        />
+                        <span className="result-category-option__icon">
+                          <CategoryGlyph categoryId={categoryId} size={20} />
+                        </span>
+                        <span>{category.name}</span>
+                      </label>
+                    );
+                  })}
+                </div>
+              </div>
               <label className="result-filter result-filter--points">
                 <span className="result-filter__heading">
                   <strong>Punkty</strong>
@@ -1187,13 +1274,14 @@ export default function CourseConfigurator() {
                       key={item.course.id}
                       item={item}
                       ctaLabel={activeCourseType.resultTemplate.cta.label}
+                      best={item.course.id === quiz.result?.primary.course.id}
                     />
                   ))}
                 </div>
               ) : (
                 <div className="results-sheet__empty">
                   <strong>Brak kierunków w tym zakresie</strong>
-                  <p>Obniż minimalną liczbę punktów lub zwiększ cenę.</p>
+                  <p>Zmień wybrane obszary, próg punktów lub cenę.</p>
                   <button type="button" onClick={resetResultFilters}>
                     Resetuj filtry
                   </button>
