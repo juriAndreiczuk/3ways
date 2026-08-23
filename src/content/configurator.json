@@ -45,91 +45,121 @@
           "id": "ped-psych",
           "categoryId": "pedagogika",
           "name": "Przygotowanie pedagogiczne dla psychologów",
-          "link": "https://studia-online.pl/studia/podyplomowe/przygotowanie-pedagogiczne-dla-psychologow/4866677"
+          "link": "https://studia-online.pl/studia/podyplomowe/przygotowanie-pedagogiczne-dla-psychologow/4866677",
+          "price": 499,
+          "amount": 10
         },
         {
           "id": "ped-language",
           "categoryId": "pedagogika",
           "name": "Przygotowanie pedagogiczne do nauczania języka obcego",
-          "link": "https://studia-online.pl/studia/podyplomowe/przygotowanie-pedagogiczne-do-nauczania-jezyka-obcego/626"
+          "link": "https://studia-online.pl/studia/podyplomowe/przygotowanie-pedagogiczne-do-nauczania-jezyka-obcego/626",
+          "price": 519,
+          "amount": 10
         },
         {
           "id": "ped-vocational",
           "categoryId": "pedagogika",
           "name": "Przygotowanie pedagogiczne do nauczania przedmiotów zawodowych",
-          "link": "https://studia-online.pl/studia/podyplomowe/przygotowanie-pedagogiczne-do-nauczania-przedmiotow-zawodowych/4867030"
+          "link": "https://studia-online.pl/studia/podyplomowe/przygotowanie-pedagogiczne-do-nauczania-przedmiotow-zawodowych/4867030",
+          "price": 519,
+          "amount": 10
         },
         {
           "id": "law-work",
           "categoryId": "prawo",
           "name": "Prawo pracy",
-          "link": "https://studia-online.pl/studia/podyplomowe/prawo-pracy/4867049"
+          "link": "https://studia-online.pl/studia/podyplomowe/prawo-pracy/4867049",
+          "price": 359,
+          "amount": 10
         },
         {
           "id": "law-criminal",
           "categoryId": "prawo",
           "name": "Prawo karne materialne i procesowe",
-          "link": "https://studia-online.pl/studia/podyplomowe/prawo-karne-materialne-i-procesowe/4867060"
+          "link": "https://studia-online.pl/studia/podyplomowe/prawo-karne-materialne-i-procesowe/4867060",
+          "price": 459,
+          "amount": 10
         },
         {
           "id": "law-enforcement",
           "categoryId": "prawo",
           "name": "Prawo karne wykonawcze",
-          "link": "https://studia-online.pl/studia/podyplomowe/prawo-karne-wykonawcze/4867067"
+          "link": "https://studia-online.pl/studia/podyplomowe/prawo-karne-wykonawcze/4867067",
+          "price": 359,
+          "amount": 10
         },
         {
           "id": "sport-adapted",
           "categoryId": "sport",
           "name": "Adaptowana aktywność fizyczna",
-          "link": "https://studia-online.pl/studia/podyplomowe/adaptowana-aktywnosc-fizyczna/4867143"
+          "link": "https://studia-online.pl/studia/podyplomowe/adaptowana-aktywnosc-fizyczna/4867143",
+          "price": 359,
+          "amount": 10
         },
         {
           "id": "sport-analyst",
           "categoryId": "sport",
           "name": "Analityk gry sportowej",
-          "link": "https://studia-online.pl/studia/podyplomowe/analityk-gry-sportowej/4867145"
+          "link": "https://studia-online.pl/studia/podyplomowe/analityk-gry-sportowej/4867145",
+          "price": 359,
+          "amount": 10
         },
         {
           "id": "sport-dance",
           "categoryId": "sport",
           "name": "Animacja form taneczno-ruchowych",
-          "link": "https://studia-online.pl/studia/podyplomowe/animacja-form-taneczno-ruchowych/4867152"
+          "link": "https://studia-online.pl/studia/podyplomowe/animacja-form-taneczno-ruchowych/4867152",
+          "price": 339,
+          "amount": 10
         },
         {
           "id": "health-cosmetology",
           "categoryId": "zdrowie",
           "name": "Kosmetologia",
-          "link": "https://studia-online.pl/studia/podyplomowe/kosmetologia/4867918"
+          "link": "https://studia-online.pl/studia/podyplomowe/kosmetologia/4867918",
+          "price": 459,
+          "amount": 10
         },
         {
           "id": "health-styling",
           "categoryId": "zdrowie",
           "name": "Stylizacja i wizaż",
-          "link": "https://studia-online.pl/studia/podyplomowe/stylizacja-i-wizaz/4867927"
+          "link": "https://studia-online.pl/studia/podyplomowe/stylizacja-i-wizaz/4867927",
+          "price": 399,
+          "amount": 10
         },
         {
           "id": "health-podology",
           "categoryId": "zdrowie",
           "name": "Podologia",
-          "link": "https://studia-online.pl/studia/podyplomowe/podologia/4867924"
+          "link": "https://studia-online.pl/studia/podyplomowe/podologia/4867924",
+          "price": 479,
+          "amount": 10
         },
         {
           "id": "business-career",
           "categoryId": "biznes",
           "name": "Doradztwo zawodowe",
-          "link": "https://studia-online.pl/studia/podyplomowe/doradztwo-zawodowe-2-sem-instytucje-rynku-pracy/103"
+          "link": "https://studia-online.pl/studia/podyplomowe/doradztwo-zawodowe-2-sem-instytucje-rynku-pracy/103",
+          "price": 339,
+          "amount": 10
         },
         {
           "id": "business-eco",
           "categoryId": "biznes",
           "name": "Ekologia w biznesie",
-          "link": "https://studia-online.pl/studia/podyplomowe/ekologia-w-biznesie/4867981"
+          "link": "https://studia-online.pl/studia/podyplomowe/ekologia-w-biznesie/4867981",
+          "price": 379,
+          "amount": 10
         },
         {
           "id": "business-english",
           "categoryId": "biznes",
           "name": "Business English",
-          "link": "https://studia-online.pl/studia/podyplomowe/business-english-jezyk-angielski-w-biznesie/4868000"
+          "link": "https://studia-online.pl/studia/podyplomowe/business-english-jezyk-angielski-w-biznesie/4868000",
+          "price": 419,
+          "amount": 10
         }
       ],
       "questions": [
@@ -573,91 +603,121 @@
           "id": "lic-it-cybersecurity",
           "categoryId": "it",
           "name": "Cyberbezpieczeństwo",
-          "link": "https://studia-online.pl/studia/licencjackie/cyberbezpieczenstwo/4869297"
+          "link": "https://studia-online.pl/studia/licencjackie/cyberbezpieczenstwo/4869297",
+          "price": 399,
+          "amount": 30
         },
         {
           "id": "lic-it-marketing-ai",
           "categoryId": "it",
           "name": "Marketing automation z elementami AI",
-          "link": "https://studia-online.pl/studia/licencjackie/digital-marketing-i-marketing-automation-z-elementami-ai/4870256"
+          "link": "https://studia-online.pl/studia/licencjackie/digital-marketing-i-marketing-automation-z-elementami-ai/4870256",
+          "price": 419,
+          "amount": 30
         },
         {
           "id": "lic-it-data-protection",
           "categoryId": "it",
           "name": "Ochrona danych osobowych",
-          "link": "https://studia-online.pl/studia/licencjackie/ochrona-danych-osobowych/4870220"
+          "link": "https://studia-online.pl/studia/licencjackie/ochrona-danych-osobowych/4870220",
+          "price": 369,
+          "amount": 30
         },
         {
           "id": "lic-business-finance",
           "categoryId": "biznes",
           "name": "Finanse i Rachunkowość",
-          "link": "https://studia-online.pl/studia/licencjackie/finanse-i-rachunkowosc/4869270"
+          "link": "https://studia-online.pl/studia/licencjackie/finanse-i-rachunkowosc/4869270",
+          "price": 499,
+          "amount": 30
         },
         {
           "id": "lic-business-information",
           "categoryId": "biznes",
           "name": "Zarządzanie informacją",
-          "link": "https://studia-online.pl/studia/licencjackie/zarzadanie-informacja/4870283"
+          "link": "https://studia-online.pl/studia/licencjackie/zarzadanie-informacja/4870283",
+          "price": 369,
+          "amount": 30
         },
         {
           "id": "lic-business-production",
           "categoryId": "biznes",
           "name": "Zarządzanie produkcją, jakością i usługami",
-          "link": "https://studia-online.pl/studia/licencjackie/zarzadzanie-produkcja-jakoscia-i-uslugami/4870265"
+          "link": "https://studia-online.pl/studia/licencjackie/zarzadzanie-produkcja-jakoscia-i-uslugami/4870265",
+          "price": 419,
+          "amount": 30
         },
         {
           "id": "lic-ped-small-child",
           "categoryId": "pedagogika",
           "name": "Pedagogika małego dziecka",
-          "link": "https://studia-online.pl/studia/licencjackie/pedagogika-malego-dziecka/4870157"
+          "link": "https://studia-online.pl/studia/licencjackie/pedagogika-malego-dziecka/4870157",
+          "price": 489,
+          "amount": 30
         },
         {
           "id": "lic-ped-care",
           "categoryId": "pedagogika",
           "name": "Pedagogika opiekuńczo-wychowawcza",
-          "link": "https://studia-online.pl/studia/licencjackie/pedagogika-opiekunczo-wychowawcza-z-profilaktyka-spoleczna/4870139"
+          "link": "https://studia-online.pl/studia/licencjackie/pedagogika-opiekunczo-wychowawcza-z-profilaktyka-spoleczna/4870139",
+          "price": 419,
+          "amount": 30
         },
         {
           "id": "lic-ped-arttherapy",
           "categoryId": "pedagogika",
           "name": "Arteterapia, choreoterapia, muzykoterapia",
-          "link": "https://studia-online.pl/studia/licencjackie/arteterapia-choreoterapia-muzykoterapia/4870175"
+          "link": "https://studia-online.pl/studia/licencjackie/arteterapia-choreoterapia-muzykoterapia/4870175",
+          "price": 419,
+          "amount": 30
         },
         {
           "id": "lic-law-criminology",
           "categoryId": "prawo",
           "name": "Kryminologia",
-          "link": "https://studia-online.pl/studia/licencjackie/kryminologia/4869207"
+          "link": "https://studia-online.pl/studia/licencjackie/kryminologia/4869207",
+          "price": 419,
+          "amount": 30
         },
         {
           "id": "lic-law-forensic-psychology",
           "categoryId": "prawo",
           "name": "Psychologia sądowa",
-          "link": "https://studia-online.pl/studia/licencjackie/psychologia-sadowa/4869499"
+          "link": "https://studia-online.pl/studia/licencjackie/psychologia-sadowa/4869499",
+          "price": 479,
+          "amount": 30
         },
         {
           "id": "lic-law-criminalistics",
           "categoryId": "prawo",
           "name": "Kryminalistyka i zwalczanie przestępczości",
-          "link": "https://studia-online.pl/studia/licencjackie/kryminalistyka-i-zwalczanie-przestepczosci/4869727"
+          "link": "https://studia-online.pl/studia/licencjackie/kryminalistyka-i-zwalczanie-przestepczosci/4869727",
+          "price": 419,
+          "amount": 30
         },
         {
           "id": "lic-psych-clinical",
           "categoryId": "psychologia",
           "name": "Psychologia kliniczna",
-          "link": "https://studia-online.pl/studia/licencjackie/psychologia-kliniczna/4869481"
+          "link": "https://studia-online.pl/studia/licencjackie/psychologia-kliniczna/4869481",
+          "price": 479,
+          "amount": 30
         },
         {
           "id": "lic-psych-neuro",
           "categoryId": "psychologia",
           "name": "Neuropsychologia",
-          "link": "https://studia-online.pl/studia/licencjackie/neuropsychologia/4869517"
+          "link": "https://studia-online.pl/studia/licencjackie/neuropsychologia/4869517",
+          "price": 479,
+          "amount": 30
         },
         {
           "id": "lic-psych-social-pathologies",
           "categoryId": "psychologia",
           "name": "Patologie społeczne",
-          "link": "https://studia-online.pl/studia/licencjackie/patologie-spoleczne-i-ochrona-ofiar/4870310"
+          "link": "https://studia-online.pl/studia/licencjackie/patologie-spoleczne-i-ochrona-ofiar/4870310",
+          "price": 419,
+          "amount": 30
         }
       ],
       "questions": [

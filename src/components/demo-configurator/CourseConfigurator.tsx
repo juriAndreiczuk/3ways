@@ -1,8 +1,9 @@
-import { useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { gsap } from "gsap";
-import { Certificate, GraduationCap } from "@phosphor-icons/react";
+import { Certificate, GraduationCap, X } from "@phosphor-icons/react";
 import {
   addScores,
+  calculateRankedCourses,
   calculateResult,
   courseConfigurator,
   getCourseType,
@@ -129,6 +130,9 @@ function ResultCourse({
         </a>
       </div>
       <p className="result-card__score">{item.score} pkt</p>
+      <p className="result-card__price">
+        {item.course.price} zł × {item.course.amount}
+      </p>
     </article>
   );
 }
@@ -262,10 +266,15 @@ export default function CourseConfigurator() {
   const [transitioning, setTransitioning] = useState(false);
   const [startHovered, setStartHovered] = useState(false);
   const [startActive, setStartActive] = useState(false);
+  const [showAllResults, setShowAllResults] = useState(false);
+  const [minimumPoints, setMinimumPoints] = useState(0);
+  const [maximumPrice, setMaximumPrice] = useState(0);
   const [pulseKey, setPulseKey] = useState(0);
   const [effectColour, setEffectColour] = useState(0x9b6cff);
   const effectTargetRef = useRef<HTMLButtonElement | null>(null);
   const panelRef = useRef<HTMLElement>(null);
+  const resultsSheetRef = useRef<HTMLElement>(null);
+  const resultsBackdropRef = useRef<HTMLDivElement>(null);
 
   const activeCourseType = useMemo(() => {
     return quiz.selectedCourseTypeId
@@ -289,6 +298,43 @@ export default function CourseConfigurator() {
 
   const activeCategoryId = quiz.selectedCategoryId ?? routingSelection;
   const activeVisual = getVisualCategory(activeCategoryId);
+
+  const allRankedCourses = useMemo(() => {
+    if (!quiz.selectedCourseTypeId || !quiz.result) return [];
+    return calculateRankedCourses(
+      quiz.selectedCourseTypeId,
+      quiz.scores,
+      quiz.routingScores,
+    );
+  }, [
+    quiz.selectedCourseTypeId,
+    quiz.result,
+    quiz.scores,
+    quiz.routingScores,
+  ]);
+
+  const resultFilterBounds = useMemo(() => {
+    const pointValues = allRankedCourses.map((item) => item.score);
+    const priceValues = allRankedCourses.map((item) => item.course.price);
+    return {
+      minimumPoints: pointValues.length ? Math.min(...pointValues) : 0,
+      maximumPoints: pointValues.length ? Math.max(...pointValues) : 0,
+      minimumPrice: priceValues.length ? Math.min(...priceValues) : 0,
+      maximumPrice: priceValues.length ? Math.max(...priceValues) : 0,
+    };
+  }, [allRankedCourses]);
+
+  const filteredRankedCourses = useMemo(
+    () =>
+      allRankedCourses.filter(
+        (item) =>
+          item.score >= minimumPoints && item.course.price <= maximumPrice,
+      ),
+    [allRankedCourses, minimumPoints, maximumPrice],
+  );
+
+  const getRangeProgress = (value: number, minimum: number, maximum: number) =>
+    maximum === minimum ? 100 : ((value - minimum) / (maximum - minimum)) * 100;
 
   const triggerSelectionEffect = (
     element: HTMLButtonElement,
@@ -496,6 +542,7 @@ export default function CourseConfigurator() {
   };
 
   const restart = () => {
+    setShowAllResults(false);
     setRoutingSelection(null);
     setHoveredCategoryId(null);
     setPendingRoutingAnswer(null);
@@ -504,6 +551,98 @@ export default function CourseConfigurator() {
     setStartActive(false);
     setQuiz(createInitialState());
   };
+
+  const openAllResults = () => {
+    setMinimumPoints(resultFilterBounds.minimumPoints);
+    setMaximumPrice(resultFilterBounds.maximumPrice);
+    setShowAllResults(true);
+  };
+
+  const resetResultFilters = () => {
+    setMinimumPoints(resultFilterBounds.minimumPoints);
+    setMaximumPrice(resultFilterBounds.maximumPrice);
+  };
+
+  const closeAllResults = () => {
+    if (!showAllResults) return;
+    const sheet = resultsSheetRef.current;
+    const backdrop = resultsBackdropRef.current;
+    const panel = panelRef.current;
+
+    if (!sheet || !backdrop) {
+      setShowAllResults(false);
+      return;
+    }
+
+    gsap
+      .timeline({ onComplete: () => setShowAllResults(false) })
+      .to(
+        sheet,
+        {
+          yPercent: 105,
+          duration: 0.58,
+          ease: "power3.inOut",
+        },
+        0,
+      )
+      .to(backdrop, { opacity: 0, duration: 0.42, ease: "power2.in" }, 0.08)
+      .to(
+        panel,
+        {
+          opacity: 1,
+          scale: 1,
+          y: 0,
+          filter: "blur(0px)",
+          duration: 0.58,
+          ease: "power3.out",
+        },
+        0,
+      );
+  };
+
+  useLayoutEffect(() => {
+    if (!showAllResults) return;
+    const sheet = resultsSheetRef.current;
+    const backdrop = resultsBackdropRef.current;
+    const panel = panelRef.current;
+    if (!sheet || !backdrop) return;
+
+    gsap.fromTo(
+      backdrop,
+      { opacity: 0 },
+      { opacity: 1, duration: 0.48, ease: "power2.out" },
+    );
+    gsap.fromTo(
+      sheet,
+      { yPercent: 105 },
+      { yPercent: 0, duration: 0.78, ease: "power3.out" },
+    );
+    if (panel) {
+      gsap.to(panel, {
+        opacity: 0.28,
+        scale: 0.94,
+        y: -18,
+        filter: "blur(3px)",
+        duration: 0.68,
+        ease: "power3.out",
+      });
+    }
+  }, [showAllResults]);
+
+  useEffect(() => {
+    if (!showAllResults) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") closeAllResults();
+    };
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [showAllResults]);
 
   useLayoutEffect(() => {
     const panel = panelRef.current;
@@ -694,9 +833,22 @@ export default function CourseConfigurator() {
           </section>
         )}
 
-        <button className="restart-button" type="button" onClick={restart}>
-          Zacznij od nowa
-        </button>
+        <div className="result-actions">
+          <button
+            className="more-results-button"
+            type="button"
+            onClick={openAllResults}
+          >
+            Pokaż więcej rezultatów
+          </button>
+          <button
+            className="restart-button restart-button--danger"
+            type="button"
+            onClick={restart}
+          >
+            Zacznij od nowa
+          </button>
+        </div>
       </section>
     );
   } else if (!currentQuestion) {
@@ -924,6 +1076,133 @@ export default function CourseConfigurator() {
           </div>
         )}
       </div>
+      {showAllResults && activeCourseType && (
+        <div
+          ref={resultsBackdropRef}
+          className="results-sheet-layer"
+          style={
+            { "--active-colour": activeVisual.cssColour } as React.CSSProperties
+          }
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) closeAllResults();
+          }}
+        >
+          <section
+            ref={resultsSheetRef}
+            className="results-sheet"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="all-results-title"
+          >
+            <header className="results-sheet__header">
+              <div>
+                <p className="configurator__eyebrow">
+                  {activeCourseType.name} · {allRankedCourses.length} kierunków
+                </p>
+                <h2 id="all-results-title">Wszystkie dopasowania</h2>
+                <p>
+                  Lista jest uporządkowana według zgodności z Twoimi
+                  odpowiedziami.
+                </p>
+              </div>
+              <button
+                className="results-sheet__close"
+                type="button"
+                aria-label="Zamknij wszystkie wyniki"
+                onClick={closeAllResults}
+                autoFocus
+              >
+                <X size={22} weight="bold" aria-hidden />
+              </button>
+            </header>
+            <div className="results-sheet__filters">
+              <label className="result-filter result-filter--points">
+                <span className="result-filter__heading">
+                  <strong>Punkty</strong>
+                  <output>
+                    {resultFilterBounds.maximumPoints}–{minimumPoints} pkt
+                  </output>
+                </span>
+                <input
+                  type="range"
+                  min={resultFilterBounds.minimumPoints}
+                  max={resultFilterBounds.maximumPoints}
+                  step={1}
+                  value={minimumPoints}
+                  onChange={(event) =>
+                    setMinimumPoints(event.currentTarget.valueAsNumber)
+                  }
+                  style={
+                    {
+                      "--range-progress": `${getRangeProgress(
+                        minimumPoints,
+                        resultFilterBounds.minimumPoints,
+                        resultFilterBounds.maximumPoints,
+                      )}%`,
+                    } as React.CSSProperties
+                  }
+                />
+              </label>
+              <label className="result-filter">
+                <span className="result-filter__heading">
+                  <strong>Cena</strong>
+                  <output>
+                    {resultFilterBounds.minimumPrice}–{maximumPrice} zł
+                  </output>
+                </span>
+                <input
+                  type="range"
+                  min={resultFilterBounds.minimumPrice}
+                  max={resultFilterBounds.maximumPrice}
+                  step={1}
+                  value={maximumPrice}
+                  onChange={(event) =>
+                    setMaximumPrice(event.currentTarget.valueAsNumber)
+                  }
+                  style={
+                    {
+                      "--range-progress": `${getRangeProgress(
+                        maximumPrice,
+                        resultFilterBounds.minimumPrice,
+                        resultFilterBounds.maximumPrice,
+                      )}%`,
+                    } as React.CSSProperties
+                  }
+                />
+              </label>
+              <div className="results-sheet__filter-actions">
+                <span>
+                  {filteredRankedCourses.length} z {allRankedCourses.length}
+                </span>
+                <button type="button" onClick={resetResultFilters}>
+                  Resetuj filtry
+                </button>
+              </div>
+            </div>
+            <div className="results-sheet__scroll">
+              {filteredRankedCourses.length > 0 ? (
+                <div className="results-sheet__list">
+                  {filteredRankedCourses.map((item) => (
+                    <ResultCourse
+                      key={item.course.id}
+                      item={item}
+                      ctaLabel={activeCourseType.resultTemplate.cta.label}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <div className="results-sheet__empty">
+                  <strong>Brak kierunków w tym zakresie</strong>
+                  <p>Obniż minimalną liczbę punktów lub zwiększ cenę.</p>
+                  <button type="button" onClick={resetResultFilters}>
+                    Resetuj filtry
+                  </button>
+                </div>
+              )}
+            </div>
+          </section>
+        </div>
+      )}
     </>
   );
 }

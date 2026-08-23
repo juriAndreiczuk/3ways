@@ -16,6 +16,8 @@ export interface Course {
   categoryId: CategoryId;
   name: string;
   link: string;
+  price: number;
+  amount: number;
 }
 
 export interface Answer {

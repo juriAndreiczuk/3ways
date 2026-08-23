@@ -6,6 +6,7 @@ import type {
   CourseTypeId,
   Question,
   QuestionId,
+  RankedCourse,
   QuizResult,
   ScoreMap,
 } from "../types/courseConfigurator";
@@ -85,16 +86,16 @@ export function addScores(current: ScoreMap, added: ScoreMap): ScoreMap {
   return nextScores;
 }
 
-export function calculateResult(
+export function calculateRankedCourses(
   courseTypeId: CourseTypeId,
   scores: ScoreMap,
   routingScores: ScoreMap,
-): QuizResult {
+): RankedCourse[] {
   const courseType = getCourseType(courseTypeId);
   const categoriesById = new Map(
     courseType.categories.map((category) => [category.id, category]),
   );
-  const rankedCourses = courseType.courses
+  return courseType.courses
     .map((course, originalIndex) => {
       const category = categoriesById.get(course.categoryId);
 
@@ -116,8 +117,20 @@ export function calculateResult(
         right.routingScore - left.routingScore ||
         left.originalIndex - right.originalIndex,
     )
-    .slice(0, courseType.config.resultsLimit)
     .map(({ course, category, score }) => ({ course, category, score }));
+}
+
+export function calculateResult(
+  courseTypeId: CourseTypeId,
+  scores: ScoreMap,
+  routingScores: ScoreMap,
+): QuizResult {
+  const courseType = getCourseType(courseTypeId);
+  const rankedCourses = calculateRankedCourses(
+    courseTypeId,
+    scores,
+    routingScores,
+  ).slice(0, courseType.config.resultsLimit);
 
   const [primary, ...alternatives] = rankedCourses;
 
