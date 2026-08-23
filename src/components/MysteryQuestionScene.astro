@@ -62,7 +62,11 @@
       const haloTexture = createHaloTexture();
       const cards = Array.from(grid.querySelectorAll<HTMLElement>("[data-reveal-card]"));
       const marks: QuestionMark[] = cards.flatMap((card) => {
-        if (card.dataset.revealed === "true") return [];
+        if (
+          card.dataset.revealed === "true" ||
+          card.dataset.gateLocked === "true"
+        )
+          return [];
         const trigger = card.querySelector<HTMLElement>("[data-reveal-trigger]");
         if (!trigger) return [];
 
@@ -258,5 +262,9 @@
   };
 
   document.addEventListener("astro:page-load", initialiseMysteryQuestions);
+  document.addEventListener(
+    "interactive-web:reveal-gate-updated",
+    initialiseMysteryQuestions,
+  );
   document.addEventListener("astro:before-swap", cleanupMysteryQuestions);
 </script>

@@ -2,6 +2,7 @@
 import DirectionCard from "./DirectionCard.astro";
 import MysteryQuestionScene from "./MysteryQuestionScene.astro";
 import ShowButtonEffects from "./ShowButtonEffects.astro";
+import { configuratorDemo } from "../data/directions";
 
 interface Direction {
   id: string;
@@ -43,7 +44,88 @@ const baseUrl = import.meta.env.BASE_URL.replace(/\/?$/, "/");
 </div>
 
 <section class="direction-grid" aria-label="Trzy kierunki interactive web">
+  <svg
+    class="direction-connectors"
+    data-direction-connectors
+    aria-hidden="true"
+  >
+    <g data-connector-branches></g>
+    <path data-connector-trunk></path>
+  </svg>
   {directions.map((direction) => <DirectionCard {...direction} />)}
+  <DirectionCard {...configuratorDemo} />
   <ShowButtonEffects />
   <MysteryQuestionScene />
 </section>
+
+<script>
+  let connectorCleanup: (() => void) | undefined;
+
+  const initialiseDirectionConnectors = () => {
+    connectorCleanup?.();
+    connectorCleanup = undefined;
+    const svg = document.querySelector<SVGSVGElement>(
+      "[data-direction-connectors]",
+    );
+    const grid = svg?.closest<HTMLElement>(".direction-grid");
+    const branches = svg?.querySelector<SVGGElement>(
+      "[data-connector-branches]",
+    );
+    const trunk = svg?.querySelector<SVGPathElement>("[data-connector-trunk]");
+    const target = grid?.querySelector<HTMLElement>("[data-reveal-gate]");
+    if (!svg || !grid || !branches || !trunk || !target) return;
+
+    const update = () => {
+      const gridBounds = grid.getBoundingClientRect();
+      const sourceCards = Array.from(
+        grid.querySelectorAll<HTMLElement>(
+          "[data-reveal-card]:not([data-reveal-gate])",
+        ),
+      );
+      if (sourceCards.length !== 3) return;
+
+      const targetBounds = target.getBoundingClientRect();
+      const targetX = targetBounds.left - gridBounds.left + targetBounds.width / 2;
+      const targetY = targetBounds.top - gridBounds.top;
+      const starts = sourceCards.map((card) => {
+        const bounds = card.getBoundingClientRect();
+        return {
+          x: bounds.left - gridBounds.left + bounds.width / 2,
+          y: bounds.bottom - gridBounds.top,
+        };
+      });
+      const startY = Math.max(...starts.map((point) => point.y));
+      const mergeY = startY + (targetY - startY) * 0.53;
+
+      svg.setAttribute("viewBox", `0 0 ${gridBounds.width} ${gridBounds.height}`);
+      svg.setAttribute("width", String(gridBounds.width));
+      svg.setAttribute("height", String(gridBounds.height));
+      branches.replaceChildren(
+        ...starts.map((point) => {
+          const path = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "path",
+          );
+          const bendY = mergeY - 12;
+          path.setAttribute(
+            "d",
+            `M ${point.x} ${point.y} V ${bendY} Q ${point.x} ${mergeY} ${targetX} ${mergeY}`,
+          );
+          return path;
+        }),
+      );
+      trunk.setAttribute("d", `M ${targetX} ${mergeY} V ${targetY}`);
+    };
+
+    const resizeObserver = new ResizeObserver(update);
+    resizeObserver.observe(grid);
+    Array.from(grid.querySelectorAll<HTMLElement>("[data-reveal-card]")).forEach(
+      (card) => resizeObserver.observe(card),
+    );
+    update();
+    connectorCleanup = () => resizeObserver.disconnect();
+  };
+
+  document.addEventListener("astro:page-load", initialiseDirectionConnectors);
+  document.addEventListener("astro:before-swap", () => connectorCleanup?.());
+</script>

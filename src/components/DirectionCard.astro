@@ -13,17 +13,38 @@ interface Props {
   imageAlt: string;
   points: string[];
   accent: "violet" | "blue" | "cyan";
+  href?: string;
+  buttonLabel?: string;
+  buttonEyebrow?: string;
+  featured?: boolean;
+  revealGate?: "all-directions";
 }
 
-const { id, number, title, eyebrow, summary, image, imageAlt, points, accent } =
-  Astro.props;
+const {
+  id,
+  number,
+  title,
+  eyebrow,
+  summary,
+  image,
+  imageAlt,
+  points,
+  accent,
+  href,
+  buttonLabel = "SHOW",
+  buttonEyebrow = `rozwiązanie ${number}`,
+  featured = false,
+  revealGate,
+} = Astro.props;
 const baseUrl = import.meta.env.BASE_URL.replace(/\/?$/, "/");
 ---
 
 <article
-  class="direction-card group"
+  class:list={["direction-card group", { "direction-card--demo": featured }]}
   data-direction-card={id}
   data-reveal-card
+  data-reveal-gate={revealGate}
+  data-gate-locked={revealGate ? "true" : undefined}
   data-image-src={image.src}
   data-accent={accent}
   data-revealed="false"
@@ -53,14 +74,15 @@ const baseUrl = import.meta.env.BASE_URL.replace(/\/?$/, "/");
     aria-label={`Odkryj rozwiązanie ${number}`}
     aria-controls={`card-content-${id}`}
     aria-expanded="false"
+    disabled={Boolean(revealGate)}
   >
-    <span data-mystery-number><span data-mystery-fallback>?</span></span>
+    <span data-mystery-number><span data-mystery-fallback>{revealGate ? "×" : "?"}</span></span>
     <span data-real-number>{number}</span>
   </button>
 
   <span class="direction-status">
     <span class="direction-status__dot"></span>
-    <span data-status-copy>kliknij ?</span>
+    <span data-status-copy>{revealGate ? "zablokowane" : "kliknij ?"}</span>
   </span>
 
   <div
@@ -99,15 +121,15 @@ const baseUrl = import.meta.env.BASE_URL.replace(/\/?$/, "/");
 
     <a
       class="show-button mt-9"
-      href={baseUrl + "kierunki/" + id}
+      href={baseUrl + (href ?? "kierunki/" + id)}
       aria-disabled="true"
       tabindex="-1"
       data-show-direction={id}
       data-testid={`show-${id}`}
     >
       <span class="show-button__copy">
-        <span class="show-button__eyebrow">rozwiązanie {number}</span>
-        <span data-button-label>SHOW</span>
+        <span class="show-button__eyebrow">{buttonEyebrow}</span>
+        <span data-button-label>{buttonLabel}</span>
       </span>
       <span class="show-button__line"></span>
       <span class="show-button__icon">
@@ -159,6 +181,82 @@ const baseUrl = import.meta.env.BASE_URL.replace(/\/?$/, "/");
     }
   };
 
+  const refreshRevealGates = (animate = true) => {
+    const cards = Array.from(
+      document.querySelectorAll<HTMLElement>("[data-reveal-card]"),
+    );
+    const sourceCards = cards.filter((card) => !card.dataset.revealGate);
+    const revealedCards = readRevealedCards();
+    const unlocked =
+      sourceCards.length > 0 &&
+      sourceCards.every((card) => {
+        const id = card.dataset.directionCard;
+        return Boolean(
+          id &&
+            (revealedCards.has(id) ||
+              card.dataset.revealed === "true" ||
+              card.dataset.animating === "true"),
+        );
+      });
+
+    cards
+      .filter((card) => Boolean(card.dataset.revealGate))
+      .forEach((card) => {
+        if (!unlocked || card.dataset.gateLocked === "false") return;
+        const trigger = card.querySelector<HTMLButtonElement>(
+          "[data-reveal-trigger]",
+        );
+        const fallback = card.querySelector<HTMLElement>(
+          "[data-mystery-fallback]",
+        );
+        const statusCopy = card.querySelector<HTMLElement>(
+          "[data-status-copy]",
+        );
+        if (!trigger || !fallback) return;
+
+        const announceUnlock = () => {
+          document.dispatchEvent(
+            new CustomEvent("interactive-web:reveal-gate-updated"),
+          );
+        };
+        const applyUnlockedState = () => {
+          card.dataset.gateLocked = "false";
+          trigger.disabled = false;
+          trigger.setAttribute(
+            "aria-label",
+            "Odkryj demonstrację możliwości",
+          );
+          fallback.textContent = "?";
+          if (statusCopy) statusCopy.textContent = "kliknij ?";
+        };
+
+        if (!animate || reducedMotion) {
+          applyUnlockedState();
+          announceUnlock();
+          return;
+        }
+
+        gsap
+          .timeline({ onComplete: announceUnlock })
+          .to(fallback, {
+            opacity: 0,
+            scale: 0.45,
+            rotate: -24,
+            duration: 0.32,
+            ease: "power2.in",
+          })
+          .add(applyUnlockedState)
+          .set(fallback, { rotate: 18 })
+          .to(fallback, {
+            opacity: 1,
+            scale: 1,
+            rotate: 0,
+            duration: 0.58,
+            ease: "back.out(1.8)",
+          });
+      });
+  };
+
   const rememberRevealedCard = (card: HTMLElement) => {
     const id = card.dataset.directionCard;
     if (!id) return;
@@ -172,6 +270,7 @@ const baseUrl = import.meta.env.BASE_URL.replace(/\/?$/, "/");
     } catch {
       // The reveal still works when browser storage is unavailable.
     }
+    refreshRevealGates();
   };
 
   const restoreRevealedCard = (
@@ -456,6 +555,7 @@ const baseUrl = import.meta.env.BASE_URL.replace(/\/?$/, "/");
     const cards = Array.from(
       document.querySelectorAll<HTMLElement>("[data-reveal-card]"),
     );
+    refreshRevealGates(false);
     cards.forEach((card) => {
       const trigger = card.querySelector<HTMLButtonElement>(
         "[data-reveal-trigger]",

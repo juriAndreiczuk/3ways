@@ -1139,17 +1139,43 @@
 
 .result-card__link {
   display: inline-flex;
-  gap: 0.45rem;
   align-items: center;
-  color: #bdb8d4;
-  font-size: 0.74rem;
-  font-weight: 700;
+  justify-content: center;
+  width: fit-content;
+  min-height: 2rem;
+  padding: 0.42rem 0.72rem;
+  gap: 0.5rem;
+  border: 1px solid color-mix(in srgb, var(--category-colour) 52%, #69627e);
+  border-radius: 0.55rem;
+  background: color-mix(in srgb, var(--category-colour) 10%, #111126);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  color: #f5f2ff;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.035em;
   text-decoration: none;
+  transition:
+    border-color 180ms ease,
+    background-color 180ms ease,
+    box-shadow 180ms ease,
+    color 180ms ease,
+    transform 180ms ease;
 }
 
 .result-card__link:hover,
 .result-card__link:focus-visible {
-  color: var(--category-colour);
+  border-color: var(--category-colour);
+  background: color-mix(in srgb, var(--category-colour) 20%, #111126);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    0 0 16px color-mix(in srgb, var(--category-colour) 24%, transparent);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.result-card__link:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--category-colour) 75%, white);
+  outline-offset: 3px;
 }
 
 .alternatives {

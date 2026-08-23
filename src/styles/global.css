@@ -926,6 +926,41 @@ a:focus-visible {
   gap: 1rem;
 }
 
+.direction-connectors {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.direction-connectors path {
+  fill: none;
+  stroke: rgba(151, 113, 255, 0.34);
+  stroke-width: 1.25;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+  filter: drop-shadow(0 0 5px rgba(126, 78, 255, 0.3));
+}
+
+.direction-connectors [data-connector-branches] path {
+  stroke-dasharray: 3 8;
+  animation: direction-connector-flow 5s linear infinite;
+}
+
+.direction-connectors [data-connector-trunk] {
+  stroke: rgba(177, 132, 255, 0.52);
+  stroke-dasharray: 4 7;
+  animation: direction-connector-flow 3.8s linear infinite;
+}
+
+@keyframes direction-connector-flow {
+  to {
+    stroke-dashoffset: -44;
+  }
+}
+
 .mystery-question-layer {
   position: absolute;
   z-index: 7;
@@ -948,6 +983,7 @@ a:focus-visible {
 
 .direction-card {
   position: relative;
+  z-index: 1;
   overflow: hidden;
   min-height: 35rem;
   padding: 0;
@@ -960,6 +996,41 @@ a:focus-visible {
     border-color 500ms ease,
     transform 500ms ease,
     box-shadow 500ms ease;
+}
+
+.direction-card--demo {
+  grid-column: 2;
+  margin-top: 6.5rem;
+}
+
+.direction-card[data-gate-locked="true"] {
+  border-color: rgba(255, 78, 103, 0.23);
+}
+
+.direction-card[data-gate-locked="true"] .direction-number {
+  border-color: rgba(255, 86, 110, 0.7);
+  background: rgba(112, 20, 42, 0.16);
+  box-shadow:
+    inset 0 0 24px rgba(255, 64, 92, 0.08),
+    0 0 20px rgba(255, 49, 81, 0.1);
+  color: #ff5b74;
+}
+
+.direction-card[data-gate-locked="true"] [data-mystery-fallback] {
+  font-size: 2.35rem;
+  font-weight: 450;
+  line-height: 1;
+  text-shadow: 0 0 14px rgba(255, 66, 94, 0.55);
+}
+
+.direction-card[data-gate-locked="true"] .direction-status__dot {
+  background: #ff405f;
+  box-shadow: 0 0 10px rgba(255, 64, 95, 0.8);
+}
+
+.direction-card[data-gate-locked="true"] .direction-status {
+  color: #a96372;
+  border-color: rgba(255, 88, 111, 0.12);
 }
 
 .direction-card::after {
@@ -1748,6 +1819,15 @@ a:focus-visible {
     grid-template-columns: 1fr;
   }
 
+  .direction-card--demo {
+    grid-column: 1;
+    margin-top: 2rem;
+  }
+
+  .direction-connectors {
+    display: none;
+  }
+
   .direction-card {
     min-height: auto;
   }
@@ -1840,6 +1920,7 @@ a:focus-visible {
   .conversation-flow__pulse,
   .direction-card__vhs::before,
   .direction-card__vhs::after,
+  .direction-connectors path,
   .start-button,
   .start-button__orbit,
   .start-button__core::before {

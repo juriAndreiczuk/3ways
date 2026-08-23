@@ -15,6 +15,11 @@ export interface Direction {
   imageAlt: string;
   points: string[];
   accent: Accent;
+  href?: string;
+  buttonLabel?: string;
+  buttonEyebrow?: string;
+  featured?: boolean;
+  revealGate?: "all-directions";
 }
 
 export interface DirectionPanel {
@@ -73,6 +78,23 @@ export const directions: Direction[] = [
     accent: "cyan",
   },
 ];
+
+export const configuratorDemo: Direction = {
+  id: "demo-configurator",
+  number: "04",
+  title: "Konfigurator",
+  eyebrow: "Demonstracja możliwości",
+  summary: "Prowadzenie użytkownika przez proces wyboru, wykonywanie obliczeń, dopasowywanie oraz prezentowanie spersonalizowanych rekomendacji.",
+  image: questionsImage,
+  imageAlt: "Ukryta demonstracja konfiguratora kierunków",
+  points: ["Iland SPA", "React.js", "Three.js • PixiJS • GSAP"],
+  accent: "violet",
+  href: "demo-configurator",
+  buttonLabel: "OTWÓRZ",
+  buttonEyebrow: "prototyp konfiguratora",
+  featured: true,
+  revealGate: "all-directions",
+};
 
 export const panels: DirectionPanel[] = [
   {
