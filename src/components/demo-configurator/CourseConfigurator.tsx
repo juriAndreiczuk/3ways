@@ -1,4 +1,12 @@
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import {
+  lazy,
+  Suspense,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { gsap } from "gsap";
 import { Certificate, GraduationCap, X } from "@phosphor-icons/react";
 import {
@@ -31,6 +39,8 @@ import {
 } from "./visualCategories";
 import "./course-configurator.css";
 
+const ResultProfileCharts = lazy(() => import("./ResultProfileCharts"));
+
 interface QuizState {
   started: boolean;
   processingComplete: boolean;
@@ -41,6 +51,7 @@ interface QuizState {
   selectedCategoryId: VisualCategoryId | null;
   scores: ScoreMap;
   routingScores: ScoreMap;
+  profileQuestionIds: string[];
   result: QuizResult | null;
 }
 
@@ -55,6 +66,7 @@ function createInitialState(): QuizState {
     selectedCategoryId: null,
     scores: {},
     routingScores: {},
+    profileQuestionIds: [],
     result: null,
   };
 }
@@ -375,6 +387,10 @@ export default function CourseConfigurator() {
         question.type === "routing"
           ? addScores(current.routingScores, answer.scores)
           : current.routingScores;
+      const nextProfileQuestionIds = [
+        ...current.profileQuestionIds,
+        question.id,
+      ];
       const nextQuestionId = resolveNextQuestionId(question, answer);
       const answeredQuestions = current.answeredQuestions + 1;
       const selectedCategoryId =
@@ -390,6 +406,7 @@ export default function CourseConfigurator() {
           selectedCategoryId,
           scores: nextScores,
           routingScores: nextRoutingScores,
+          profileQuestionIds: nextProfileQuestionIds,
           result: current.selectedCourseTypeId
             ? calculateResult(
                 current.selectedCourseTypeId,
@@ -407,6 +424,7 @@ export default function CourseConfigurator() {
         selectedCategoryId,
         scores: nextScores,
         routingScores: nextRoutingScores,
+        profileQuestionIds: nextProfileQuestionIds,
       };
     });
   };
@@ -840,6 +858,21 @@ export default function CourseConfigurator() {
           primary
           best
         />
+
+        {quiz.selectedCategoryId && (
+          <Suspense
+            fallback={
+              <section className="result-profile result-profile--loading" />
+            }
+          >
+            <ResultProfileCharts
+              courseType={activeCourseType}
+              selectedCategoryId={quiz.selectedCategoryId}
+              scores={quiz.scores}
+              profileQuestionIds={quiz.profileQuestionIds}
+            />
+          </Suspense>
+        )}
 
         {quiz.result.alternatives.length > 0 && (
           <section

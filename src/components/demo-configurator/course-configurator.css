@@ -1182,6 +1182,140 @@
   margin-top: 2rem;
 }
 
+.result-profile {
+  position: relative;
+  overflow: hidden;
+  padding: 1.5rem;
+  border: 1px solid color-mix(in srgb, var(--profile-colour) 32%, rgba(144, 138, 177, 0.22));
+  border-radius: 1rem;
+  background:
+    radial-gradient(circle at 18% 18%, color-mix(in srgb, var(--profile-colour) 9%, transparent), transparent 31rem),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.025), rgba(255, 255, 255, 0.008));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    0 18px 45px rgba(0, 0, 0, 0.16);
+}
+
+.result-profile--loading {
+  min-height: 25rem;
+}
+
+.result-profile__header {
+  margin-bottom: 1.15rem;
+  text-align: center;
+}
+
+.result-profile__header h2 {
+  margin: 0.28rem 0 0.35rem;
+  font-size: 1.35rem;
+}
+
+.result-profile__header > p:last-child {
+  margin: 0;
+  color: #9691a9;
+  font-size: 0.83rem;
+}
+
+.result-profile__charts {
+  display: grid;
+  grid-template-columns: minmax(0, 0.78fr) minmax(0, 1.22fr);
+  gap: 0.9rem;
+}
+
+.result-profile__chart {
+  min-width: 0;
+  padding: 1rem 1rem 0.35rem;
+  border: 1px solid rgba(145, 139, 181, 0.18);
+  border-radius: 0.85rem;
+  background: rgba(6, 7, 22, 0.42);
+  box-shadow: inset 0 0 34px rgba(255, 255, 255, 0.012);
+}
+
+.result-profile__chart-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 2.8rem;
+}
+
+.result-profile__chart-heading div {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.result-profile__chart-heading span,
+.result-profile__chart-heading small {
+  color: #77738c;
+  font-size: 0.58rem;
+  font-weight: 750;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+
+.result-profile__chart-heading strong {
+  color: #f5f2ff;
+  font-size: 0.86rem;
+}
+
+.result-profile__chart-heading small {
+  padding-top: 0.2rem;
+  color: var(--profile-colour);
+  white-space: nowrap;
+}
+
+.result-profile__donut-shell {
+  position: relative;
+}
+
+.result-profile__donut-value {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  text-align: center;
+}
+
+.result-profile__donut-value strong {
+  position: absolute;
+  top: calc(50% - 2.05rem);
+  left: 50%;
+  color: #f8f6ff;
+  font-size: 1.9rem;
+  line-height: 1;
+  transform: translate(-50%, -50%);
+}
+
+.result-profile__donut-value span {
+  position: absolute;
+  top: calc(50% - 0.6rem);
+  left: 50%;
+  width: 8rem;
+  color: #8f8aa5;
+  font-size: 0.5rem;
+  font-weight: 750;
+  letter-spacing: 0.12em;
+  line-height: 1.35;
+  text-transform: uppercase;
+  transform: translateX(-50%);
+}
+
+.result-profile .apexcharts-canvas,
+.result-profile .apexcharts-svg {
+  background: transparent !important;
+}
+
+.result-profile .apexcharts-tooltip,
+.result-profile .apexcharts-xaxistooltip {
+  border: 1px solid color-mix(in srgb, var(--profile-colour) 35%, #34314b) !important;
+  background: #0d0e22 !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35) !important;
+}
+
+.result-profile .apexcharts-tooltip-title {
+  border-bottom-color: rgba(145, 139, 181, 0.18) !important;
+  background: rgba(255, 255, 255, 0.03) !important;
+}
+
 .alternatives > h2 {
   font-size: 1.15rem;
 }
