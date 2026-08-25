@@ -350,12 +350,7 @@ export default function CourseConfigurator() {
           item.score >= minimumPoints &&
           item.course.price <= maximumPrice,
       ),
-    [
-      allRankedCourses,
-      minimumPoints,
-      maximumPrice,
-      selectedResultCategoryIds,
-    ],
+    [allRankedCourses, minimumPoints, maximumPrice, selectedResultCategoryIds],
   );
 
   const getRangeProgress = (value: number, minimum: number, maximum: number) =>
@@ -727,6 +722,8 @@ export default function CourseConfigurator() {
             onComplete={completeStart}
           />
         </div>
+        <br />
+        <br />
         <p className="configurator__eyebrow">Konfigurator kierunku</p>
         <h2 id="configurator-start-title">Znajdź swoją ścieżkę</h2>
         <p className="configurator__start-description">

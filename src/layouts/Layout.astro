@@ -1,5 +1,6 @@
 ---
 import { ClientRouter } from "astro:transitions";
+import ViewportWarning from "../components/ViewportWarning.astro";
 import "../styles/global.css";
 
 interface Props {
@@ -28,5 +29,6 @@ const baseUrl = import.meta.env.BASE_URL.replace(/\/?$/, "/");
   </head>
   <body>
     <slot />
+    <ViewportWarning />
   </body>
 </html>

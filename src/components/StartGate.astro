@@ -1,3 +1,7 @@
+---
+import logo from "../assets/logo.svg";
+---
+
 <script is:inline>
   (() => {
     try {
@@ -12,12 +16,26 @@
 </script>
 
 <div class="start-gate" data-start-gate>
+  <div class="start-gate__particles" aria-hidden="true">
+    <i style="--x: 6%; --y: 14%; --dx: 9vw; --dy: 13vh; --size: 0.22rem; --delay: -1s; --duration: 8s"></i>
+    <i style="--x: 18%; --y: 72%; --dx: -8vw; --dy: -15vh; --size: 0.14rem; --delay: -4s; --duration: 11s"></i>
+    <i style="--x: 27%; --y: 31%; --dx: 12vw; --dy: -8vh; --size: 0.3rem; --delay: -7s; --duration: 13s"></i>
+    <i style="--x: 38%; --y: 84%; --dx: -13vw; --dy: 7vh; --size: 0.16rem; --delay: -2s; --duration: 10s"></i>
+    <i style="--x: 48%; --y: 10%; --dx: 7vw; --dy: 17vh; --size: 0.18rem; --delay: -6s; --duration: 12s"></i>
+    <i style="--x: 58%; --y: 65%; --dx: -10vw; --dy: -12vh; --size: 0.24rem; --delay: -9s; --duration: 9s"></i>
+    <i style="--x: 69%; --y: 23%; --dx: 11vw; --dy: 10vh; --size: 0.14rem; --delay: -3s; --duration: 14s"></i>
+    <i style="--x: 78%; --y: 78%; --dx: -7vw; --dy: -14vh; --size: 0.28rem; --delay: -8s; --duration: 12s"></i>
+    <i style="--x: 89%; --y: 42%; --dx: 8vw; --dy: 8vh; --size: 0.16rem; --delay: -5s; --duration: 10s"></i>
+    <i style="--x: 95%; --y: 88%; --dx: -12vw; --dy: -9vh; --size: 0.2rem; --delay: -10s; --duration: 15s"></i>
+    <i style="--x: 12%; --y: 47%; --dx: 14vw; --dy: -6vh; --size: 0.12rem; --delay: -12s; --duration: 13s"></i>
+    <i style="--x: 84%; --y: 12%; --dx: -10vw; --dy: 18vh; --size: 0.12rem; --delay: -11s; --duration: 11s"></i>
+  </div>
   <button class="start-button" type="button" data-start-button aria-label="Rozpocznij prezentację">
     <span class="start-button__aura" aria-hidden="true"></span>
     <span class="start-button__orbit start-button__orbit--outer" aria-hidden="true"></span>
     <span class="start-button__orbit start-button__orbit--inner" aria-hidden="true"></span>
     <span class="start-button__core">
-      <span>START</span>
+      <img src={logo.src} alt="" />
     </span>
   </button>
 </div>

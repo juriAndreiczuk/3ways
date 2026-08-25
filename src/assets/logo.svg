@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="158" height="138" viewBox="0 0 158 138" role="img" aria-labelledby="title desc">
+  <title id="title">Wskz mark</title>
+  <desc id="desc">Logo reconstructed at the supplied raster's native 158 by 138 canvas. Every white segment is independently addressable.</desc>
+
+  <g id="mark" fill="#fff">
+    <!-- Contours traced from the 50% antialias boundary of the source PNG. -->
+    <path id="stripe-1" d="M21 111 30 97 54 60 67 40 77 25 78 26 82 34 82 36 77 44 42 98 32 113 21 113Z"/>
+    <path id="stripe-2-upper" d="M49 93 54 85 78 48 91 28 95 22 96 21 100 29 101 32 100 34 76 71 63 91 61 93Z"/>
+    <path id="stripe-2-lower" d="M55 112 56 110 59 105 83 68 91 56 92 57 95 63 96 66 96 67 95 69 92 74 81 91 68 111 66 113 55 113Z"/>
+    <path id="stripe-3-upper" d="M84 92 91 81 104 61 110 52 114 60 115 63 114 65 105 79 97 91 95 93 84 93Z"/>
+    <path id="stripe-3-lower" d="M89 112 90 110 101 93 105 87 106 87 110 96 110 98 109 100 106 105 102 111 100 113 90 113Z"/>
+    <path id="triangle" d="M118 93 120 89 124 83 130 93Z"/>
+  </g>
+</svg>
