@@ -16,6 +16,7 @@ const {
   presentationStage,
 } = Astro.props;
 const baseUrl = import.meta.env.BASE_URL.replace(/\/?$/, "/");
+const buildRevision = "2026-09-01-refresh-01";
 ---
 
 <!doctype html>
@@ -30,7 +31,7 @@ const baseUrl = import.meta.env.BASE_URL.replace(/\/?$/, "/");
     <title>{title}</title>
     <ClientRouter />
   </head>
-  <body>
+  <body data-build-revision={buildRevision}>
     {presentationStage && <PresentationRoute current={presentationStage} />}
     <slot />
     <ViewportWarning />

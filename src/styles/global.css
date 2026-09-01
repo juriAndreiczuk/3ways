@@ -1,6 +1,7 @@
 @import "tailwindcss";
 
 :root {
+  --build-revision: 2026-09-01-refresh-01;
   color-scheme: dark;
   font-family:
     Inter,
