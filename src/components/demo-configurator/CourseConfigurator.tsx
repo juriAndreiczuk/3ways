@@ -40,6 +40,7 @@ import {
 import "./course-configurator.css";
 
 const ResultProfileCharts = lazy(() => import("./ResultProfileCharts"));
+const MatchDuelChart = lazy(() => import("./MatchDuelChart"));
 
 interface QuizState {
   started: boolean;
@@ -867,6 +868,15 @@ export default function CourseConfigurator() {
               selectedCategoryId={quiz.selectedCategoryId}
               scores={quiz.scores}
               profileQuestionIds={quiz.profileQuestionIds}
+            />
+          </Suspense>
+        )}
+
+        {quiz.selectedCategoryId && (
+          <Suspense fallback={<section className="match-duel match-duel--loading" />}>
+            <MatchDuelChart
+              contenders={allRankedCourses}
+              selectedCategoryId={quiz.selectedCategoryId}
             />
           </Suspense>
         )}

@@ -98,6 +98,9 @@ export default function ResultProfileCharts({
     plotOptions: {
       pie: {
         expandOnClick: false,
+        offsetX: 0,
+        offsetY: 0,
+        customScale: 1,
         donut: {
           size: "76%",
           labels: { show: false },
@@ -195,6 +198,7 @@ export default function ResultProfileCharts({
               type="donut"
               series={[agreement, Math.max(0, 100 - agreement)]}
               options={donutOptions}
+              width="100%"
               height={260}
             />
             <div className="result-profile__donut-value" aria-hidden="true">
