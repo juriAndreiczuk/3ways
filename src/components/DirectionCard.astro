@@ -1,0 +1,579 @@
+---
+interface Props {
+  id: string;
+  number: string;
+  title: string;
+  eyebrow: string;
+  summary: string;
+  image: {
+    src: string;
+    width: number;
+    height: number;
+  };
+  imageAlt: string;
+  points: string[];
+  accent: "violet" | "blue" | "cyan";
+  href?: string;
+  buttonLabel?: string;
+  buttonEyebrow?: string;
+  featured?: boolean;
+  revealGate?: "all-directions";
+}
+
+const {
+  id,
+  number,
+  title,
+  eyebrow,
+  summary,
+  image,
+  imageAlt,
+  points,
+  accent,
+  href,
+  buttonLabel = "SHOW",
+  buttonEyebrow = `rozwiązanie ${number}`,
+  featured = false,
+  revealGate,
+} = Astro.props;
+const baseUrl = import.meta.env.BASE_URL.replace(/\/?$/, "/");
+---
+
+<article
+  class:list={["direction-card group", { "direction-card--demo": featured }]}
+  data-direction-card={id}
+  data-reveal-card
+  data-reveal-gate={revealGate}
+  data-gate-locked={revealGate ? "true" : undefined}
+  data-image-src={image.src}
+  data-accent={accent}
+  data-revealed="false"
+>
+  <div class="direction-card__topline"></div>
+
+  <div class="direction-card__visual" data-pixi-host>
+    <img
+      class="direction-card__fallback"
+      src={image.src}
+      width={image.width}
+      height={image.height}
+      alt={imageAlt}
+      loading="eager"
+      decoding="async"
+    />
+    <canvas class="direction-card__canvas" data-pixi-canvas aria-hidden="true"
+    ></canvas>
+    <div class="direction-card__veil" aria-hidden="true"></div>
+    <div class="direction-card__vhs" aria-hidden="true"></div>
+  </div>
+
+  <button
+    class="direction-number direction-number--mystery"
+    type="button"
+    data-reveal-trigger
+    aria-label={`Odkryj rozwiązanie ${number}`}
+    aria-controls={`card-content-${id}`}
+    aria-expanded="false"
+    disabled={Boolean(revealGate)}
+  >
+    <span data-mystery-number><span data-mystery-fallback>{revealGate ? "×" : "?"}</span></span>
+    <span data-real-number>{number}</span>
+  </button>
+
+  <span class="direction-status">
+    <span class="direction-status__dot"></span>
+    <span data-status-copy>{revealGate ? "zablokowane" : "kliknij ?"}</span>
+  </span>
+
+  <div
+    id={`card-content-${id}`}
+    class="direction-card__content"
+    data-card-content
+    aria-hidden="true"
+  >
+    <p
+      class="mb-3 text-[0.68rem] font-bold tracking-[0.24em] text-violet-300 uppercase"
+    >
+      {eyebrow}
+    </p>
+    <h2
+      class="max-w-[12ch] text-3xl leading-[0.96] font-semibold tracking-[-0.05em] text-white md:text-[2.15rem]"
+    >
+      {title}
+    </h2>
+    <p class="mt-5 min-h-16 max-w-sm text-sm leading-6 text-slate-400">
+      {summary}
+    </p>
+
+    <ul
+      class="mt-8 space-y-3 border-t border-white/8 pt-6"
+      aria-label={`Zakres: ${title}`}
+    >
+      {
+        points.map((point) => (
+          <li class="flex items-center gap-3 text-sm text-slate-300">
+            <span class="point-mark" aria-hidden="true" />
+            {point}
+          </li>
+        ))
+      }
+    </ul>
+
+    <a
+      class="show-button mt-9"
+      href={baseUrl + (href ?? "kierunki/" + id)}
+      aria-disabled="true"
+      tabindex="-1"
+      data-show-direction={id}
+      data-testid={`show-${id}`}
+    >
+      <span class="show-button__copy">
+        <span class="show-button__eyebrow">{buttonEyebrow}</span>
+        <span data-button-label>{buttonLabel}</span>
+      </span>
+      <span class="show-button__line"></span>
+      <span class="show-button__icon">
+        <svg viewBox="0 0 18 18" aria-hidden="true">
+          <path
+            d="M3 9h11M10 5l4 4-4 4"
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="1.5"></path>
+        </svg>
+      </span>
+    </a>
+  </div>
+</article>
+
+<script>
+  import {
+    Application,
+    Assets,
+    BlurFilter,
+    DisplacementFilter,
+    NoiseFilter,
+    Sprite,
+    Texture,
+  } from "pixi.js";
+  import { gsap } from "gsap";
+
+  const reducedMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)",
+  ).matches;
+  const revealedCardsStorageKey = "interactive-web:revealed-directions";
+  let directionCardCleanups: Array<() => void> = [];
+  let directionCardVersion = 0;
+
+  const readRevealedCards = () => {
+    try {
+      const storedValue = window.localStorage.getItem(revealedCardsStorageKey);
+      if (!storedValue) return new Set<string>();
+      const parsedValue: unknown = JSON.parse(storedValue);
+      return new Set(
+        Array.isArray(parsedValue)
+          ? parsedValue.filter((id): id is string => typeof id === "string")
+          : [],
+      );
+    } catch {
+      return new Set<string>();
+    }
+  };
+
+  const refreshRevealGates = (animate = true) => {
+    const cards = Array.from(
+      document.querySelectorAll<HTMLElement>("[data-reveal-card]"),
+    );
+    const sourceCards = cards.filter((card) => !card.dataset.revealGate);
+    const revealedCards = readRevealedCards();
+    const unlocked =
+      sourceCards.length > 0 &&
+      sourceCards.every((card) => {
+        const id = card.dataset.directionCard;
+        return Boolean(
+          id &&
+            (revealedCards.has(id) ||
+              card.dataset.revealed === "true" ||
+              card.dataset.animating === "true"),
+        );
+      });
+
+    cards
+      .filter((card) => Boolean(card.dataset.revealGate))
+      .forEach((card) => {
+        if (!unlocked || card.dataset.gateLocked === "false") return;
+        const trigger = card.querySelector<HTMLButtonElement>(
+          "[data-reveal-trigger]",
+        );
+        const fallback = card.querySelector<HTMLElement>(
+          "[data-mystery-fallback]",
+        );
+        const statusCopy = card.querySelector<HTMLElement>(
+          "[data-status-copy]",
+        );
+        if (!trigger || !fallback) return;
+
+        const announceUnlock = () => {
+          document.dispatchEvent(
+            new CustomEvent("interactive-web:reveal-gate-updated"),
+          );
+        };
+        const applyUnlockedState = () => {
+          card.dataset.gateLocked = "false";
+          trigger.disabled = false;
+          trigger.setAttribute(
+            "aria-label",
+            "Odkryj demonstrację możliwości",
+          );
+          fallback.textContent = "?";
+          if (statusCopy) statusCopy.textContent = "kliknij ?";
+        };
+
+        if (!animate || reducedMotion) {
+          applyUnlockedState();
+          announceUnlock();
+          return;
+        }
+
+        gsap
+          .timeline({ onComplete: announceUnlock })
+          .to(fallback, {
+            opacity: 0,
+            scale: 0.45,
+            rotate: -24,
+            duration: 0.32,
+            ease: "power2.in",
+          })
+          .add(applyUnlockedState)
+          .set(fallback, { rotate: 18 })
+          .to(fallback, {
+            opacity: 1,
+            scale: 1,
+            rotate: 0,
+            duration: 0.58,
+            ease: "back.out(1.8)",
+          });
+      });
+  };
+
+  const rememberRevealedCard = (card: HTMLElement) => {
+    const id = card.dataset.directionCard;
+    if (!id) return;
+    try {
+      const revealedCards = readRevealedCards();
+      revealedCards.add(id);
+      window.localStorage.setItem(
+        revealedCardsStorageKey,
+        JSON.stringify([...revealedCards]),
+      );
+    } catch {
+      // The reveal still works when browser storage is unavailable.
+    }
+    refreshRevealGates();
+  };
+
+  const restoreRevealedCard = (
+    card: HTMLElement,
+    trigger: HTMLButtonElement,
+  ) => {
+    const content = card.querySelector<HTMLElement>("[data-card-content]");
+    const showButton = card.querySelector<HTMLAnchorElement>(
+      "[data-show-direction]",
+    );
+    const statusCopy = card.querySelector<HTMLElement>("[data-status-copy]");
+    const visual = card.querySelector<HTMLElement>("[data-pixi-host]");
+
+    card.dataset.revealed = "true";
+    delete card.dataset.animating;
+    trigger.disabled = true;
+    trigger.setAttribute("aria-expanded", "true");
+    content?.setAttribute("aria-hidden", "false");
+    if (showButton) {
+      showButton.setAttribute("aria-disabled", "false");
+      showButton.removeAttribute("tabindex");
+    }
+    if (statusCopy) statusCopy.textContent = "odkryto";
+
+    gsap.set(card.querySelector("[data-mystery-number]"), {
+      opacity: 0,
+      scale: 0.55,
+    });
+    gsap.set(card.querySelector("[data-real-number]"), {
+      opacity: 1,
+      scale: 1,
+    });
+    if (content) gsap.set(content, { opacity: 1, y: 0, filter: "blur(0px)" });
+    if (visual) gsap.set(visual, { display: "none", opacity: 0 });
+  };
+
+  const revealCard = (
+    card: HTMLElement,
+    trigger: HTMLButtonElement,
+    animation?: () => void,
+  ) => {
+    if (card.dataset.revealed === "true" || card.dataset.animating === "true")
+      return;
+
+    rememberRevealedCard(card);
+    card.dataset.animating = "true";
+    trigger.disabled = true;
+    trigger.setAttribute("aria-expanded", "true");
+
+    const content = card.querySelector<HTMLElement>("[data-card-content]");
+    const showButton = card.querySelector<HTMLAnchorElement>(
+      "[data-show-direction]",
+    );
+    const statusCopy = card.querySelector<HTMLElement>("[data-status-copy]");
+    const visual = card.querySelector<HTMLElement>("[data-pixi-host]");
+    content?.setAttribute("aria-hidden", "false");
+    if (showButton) {
+      showButton.setAttribute("aria-disabled", "false");
+      showButton.removeAttribute("tabindex");
+    }
+    if (statusCopy) statusCopy.textContent = "odkryto";
+
+    if (animation) {
+      animation();
+      return;
+    }
+
+    const timeline = gsap.timeline({
+      defaults: { ease: "power3.out" },
+      onComplete: () => {
+        card.dataset.revealed = "true";
+        delete card.dataset.animating;
+      },
+    });
+
+    timeline
+      .to(
+        card.querySelector("[data-mystery-number]"),
+        { opacity: 0, scale: 0.55, duration: 0.3 },
+        0,
+      )
+      .to(
+        card.querySelector("[data-real-number]"),
+        { opacity: 1, scale: 1, duration: 0.55 },
+        0.16,
+      )
+      .to(
+        card.querySelector(".direction-card__veil"),
+        { opacity: 0.18, duration: 0.45 },
+        0,
+      )
+      .to(visual, { opacity: 0, scale: 1.06, duration: 0.82 }, 0)
+      .to(
+        content,
+        { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.8 },
+        0.28,
+      )
+      .set(visual, { display: "none" });
+    timeline.timeScale(0.5);
+  };
+
+  const createNoiseTexture = () => {
+    const noiseCanvas = document.createElement("canvas");
+    noiseCanvas.width = 72;
+    noiseCanvas.height = 72;
+    const context = noiseCanvas.getContext("2d");
+    if (!context) return Texture.WHITE;
+
+    const imageData = context.createImageData(
+      noiseCanvas.width,
+      noiseCanvas.height,
+    );
+    for (let index = 0; index < imageData.data.length; index += 4) {
+      const value = Math.random() * 255;
+      imageData.data[index] = value;
+      imageData.data[index + 1] = value;
+      imageData.data[index + 2] = value;
+      imageData.data[index + 3] = 255;
+    }
+    context.putImageData(imageData, 0, 0);
+
+    const texture = Texture.from(noiseCanvas);
+    texture.source.addressMode = "repeat";
+    return texture;
+  };
+
+  const initialiseCard = async (card: HTMLElement) => {
+    const host = card.querySelector<HTMLElement>("[data-pixi-host]");
+    const canvas = card.querySelector<HTMLCanvasElement>("[data-pixi-canvas]");
+    const trigger = card.querySelector<HTMLButtonElement>(
+      "[data-reveal-trigger]",
+    );
+    const content = card.querySelector<HTMLElement>("[data-card-content]");
+    const imageSource = card.dataset.imageSrc;
+    if (!host || !canvas || !trigger || !content || !imageSource) return;
+
+    if (reducedMotion) {
+      const handleReveal = () => revealCard(card, trigger);
+      trigger.addEventListener("click", handleReveal);
+      return () => trigger.removeEventListener("click", handleReveal);
+    }
+
+    try {
+      const app = new Application();
+      await app.init({
+        canvas,
+        resizeTo: host,
+        backgroundAlpha: 0,
+        antialias: true,
+        autoDensity: true,
+        resolution: Math.min(window.devicePixelRatio, 2),
+        preference: "webgl",
+      });
+
+      const texture = await Assets.load(imageSource);
+      const artwork = new Sprite(texture);
+      artwork.anchor.set(0.5);
+
+      const displacementMap = new Sprite(createNoiseTexture());
+      displacementMap.alpha = 0;
+      displacementMap.width = Math.max(host.clientWidth, 1);
+      displacementMap.height = Math.max(host.clientHeight, 1);
+
+      const blurFilter = new BlurFilter({
+        strength: 32,
+        quality: 4,
+        kernelSize: 7,
+      });
+      blurFilter.repeatEdgePixels = true;
+      const displacementFilter = new DisplacementFilter({
+        sprite: displacementMap,
+        scale: { x: 155, y: 112 },
+      });
+      const noiseFilter = new NoiseFilter({ noise: 0.58, seed: Math.random() });
+      artwork.filters = [displacementFilter, blurFilter, noiseFilter];
+
+      app.stage.addChild(displacementMap);
+      app.stage.addChild(artwork);
+
+      const fitArtwork = () => {
+        const width = Math.max(host.clientWidth, 1);
+        const height = Math.max(host.clientHeight, 1);
+        const scale = Math.max(width / texture.width, height / texture.height);
+        artwork.scale.set(scale);
+        artwork.position.set(width / 2, height / 2);
+        displacementMap.width = width;
+        displacementMap.height = height;
+      };
+
+      fitArtwork();
+      const resizeObserver = new ResizeObserver(fitArtwork);
+      resizeObserver.observe(host);
+
+      let noiseFrame = 0;
+      app.ticker.add((ticker) => {
+        if (
+          card.dataset.revealed === "true" ||
+          card.dataset.animating === "true"
+        )
+          return;
+        const time = ticker.lastTime * 0.001;
+        displacementMap.x = (displacementMap.x + ticker.deltaTime * 1.55) % 72;
+        displacementMap.y =
+          (displacementMap.y + ticker.deltaTime * 1.05) % 72;
+        displacementFilter.scale.x = 155 + Math.sin(time * 1.9) * 48;
+        displacementFilter.scale.y = 112 + Math.cos(time * 2.3) * 36;
+        blurFilter.strength = 32 + Math.sin(time * 2.6) * 10;
+        noiseFilter.noise = 0.52 + Math.abs(Math.sin(time * 3.7)) * 0.22;
+        noiseFrame += 1;
+        if (noiseFrame % 2 === 0) noiseFilter.seed = Math.random();
+      });
+
+      card.dataset.pixiReady = "true";
+
+      trigger.addEventListener("click", () => {
+        revealCard(card, trigger, () => {
+          const timeline = gsap.timeline({
+            defaults: { ease: "power3.out" },
+            onComplete: () => {
+              card.dataset.revealed = "true";
+              delete card.dataset.animating;
+              app.stop();
+              resizeObserver.disconnect();
+              host.style.display = "none";
+            },
+          });
+
+          timeline
+            .to(displacementFilter.scale, { x: 0, y: 0, duration: 1.25 }, 0)
+            .to(blurFilter, { strength: 0, duration: 1.15 }, 0)
+            .to(noiseFilter, { noise: 0, duration: 0.95 }, 0)
+            .to(
+              card.querySelector(".direction-card__veil"),
+              { opacity: 0.12, duration: 0.55 },
+              0,
+            )
+            .to(host, { opacity: 0, scale: 1.08, duration: 1.18 }, 0.35)
+            .to(
+              card.querySelector("[data-mystery-number]"),
+              { opacity: 0, scale: 0.55, duration: 0.3 },
+              0.12,
+            )
+            .to(
+              card.querySelector("[data-real-number]"),
+              { opacity: 1, scale: 1, duration: 0.55 },
+              0.28,
+            )
+            .to(
+              content,
+              { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.85 },
+              0.48,
+            );
+          timeline.timeScale(0.5);
+        });
+      });
+      return () => {
+        app.stop();
+        resizeObserver.disconnect();
+        gsap.killTweensOf(card);
+        gsap.killTweensOf(content);
+        app.destroy();
+      };
+    } catch {
+      card.dataset.pixiReady = "false";
+      canvas.hidden = true;
+      const handleReveal = () => revealCard(card, trigger);
+      trigger.addEventListener("click", handleReveal);
+      return () => trigger.removeEventListener("click", handleReveal);
+    }
+  };
+
+  const cleanupDirectionCards = () => {
+    directionCardVersion += 1;
+    directionCardCleanups.forEach((cleanup) => cleanup());
+    directionCardCleanups = [];
+  };
+
+  const initialiseDirectionCards = () => {
+    cleanupDirectionCards();
+    const version = directionCardVersion;
+    const revealedCards = readRevealedCards();
+    const cards = Array.from(
+      document.querySelectorAll<HTMLElement>("[data-reveal-card]"),
+    );
+    refreshRevealGates(false);
+    cards.forEach((card) => {
+      const trigger = card.querySelector<HTMLButtonElement>(
+        "[data-reveal-trigger]",
+      );
+      const id = card.dataset.directionCard;
+      if (trigger && id && revealedCards.has(id)) {
+        restoreRevealedCard(card, trigger);
+        return;
+      }
+      void initialiseCard(card).then((cleanup) => {
+        if (!cleanup) return;
+        if (version === directionCardVersion)
+          directionCardCleanups.push(cleanup);
+        else cleanup();
+      });
+    });
+  };
+
+  document.addEventListener("astro:page-load", initialiseDirectionCards);
+  document.addEventListener("astro:before-swap", cleanupDirectionCards);
+</script>

@@ -1,0 +1,121 @@
+---
+interface PanelImage {
+  src: string;
+  width: number;
+  height: number;
+}
+
+interface Props {
+  id: string;
+  number: string;
+  title: string;
+  kicker: string;
+  image: PanelImage;
+  imageAlt: string;
+  description: string;
+  note: string;
+  capabilities: string[];
+  examples: Array<{
+    label: string;
+    href: string;
+  }>;
+  standalone?: boolean;
+}
+
+const panel = Astro.props;
+const standalone = panel.standalone ?? false;
+const baseUrl = import.meta.env.BASE_URL.replace(/\/?$/, "/");
+---
+
+<article
+  id={`panel-${panel.id}`}
+  class:list={["detail-panel", { "detail-panel--standalone": standalone }]}
+  data-direction-panel={panel.id}
+  data-standalone-detail={standalone ? "true" : undefined}
+  data-visible={standalone ? "true" : undefined}
+  hidden={!standalone}
+  tabindex="-1"
+>
+  <div class="detail-panel__header">
+    <span class="detail-panel__number" data-animate-number>{panel.number}</span>
+    <div>
+      <p data-split-kicker>{panel.kicker}</p>
+      <h2 data-split-title>{panel.title}</h2>
+    </div>
+    {standalone ? (
+      <a
+        class="back-link"
+        href={baseUrl + "kierunki"}
+        aria-label="Wróć do wyboru kierunku"
+        data-detail-back
+      >
+        <span class="back-link__icon" aria-hidden="true">
+          <svg viewBox="0 0 18 18">
+            <path d="M15 9H4M8 5 4 9l4 4"></path>
+          </svg>
+        </span>
+        <span class="back-link__copy">POWRÓT</span>
+      </a>
+    ) : (
+      <button
+        class="close-button"
+        type="button"
+        aria-label={`Zamknij: ${panel.title}`}
+        data-close-panel
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"></path></svg>
+      </button>
+    )}
+  </div>
+
+  <div class="detail-panel__body">
+    <div class="visual-frame" data-animate-image>
+      <span class="visual-frame__label">VISUAL / {panel.number}</span>
+      <img
+        src={panel.image.src}
+        alt={panel.imageAlt}
+        width={panel.image.width}
+        height={panel.image.height}
+        loading="lazy"
+        decoding="async"
+      />
+    </div>
+
+    <div class="detail-copy">
+      <p class="detail-copy__lead" data-split-lead>{panel.description}</p>
+      <p class="detail-copy__note" data-split-note>{panel.note}</p>
+
+      <div class="capability-grid">
+        {
+          panel.capabilities.map((capability, index) => (
+            <div data-animate-capability>
+              <span>{String(index + 1).padStart(2, "0")}</span>
+              <p>{capability}</p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+
+  <footer class="examples-row" id={`${panel.id}-examples`}>
+    <p data-animate-examples-label>PRZYKŁADY</p>
+    <div>
+      {
+        panel.examples.map((example) => (
+          <a
+            href={example.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            data-animate-example
+          >
+            {example.label}
+            <svg viewBox="0 0 16 16" aria-hidden="true">
+              <path d="M4 12 12 4M6 4h6v6" />
+            </svg>
+          </a>
+        ))
+      }
+    </div>
+  </footer>
+</article>

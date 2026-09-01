@@ -1,0 +1,289 @@
+---
+import DetailPanel from "./DetailPanel.astro";
+
+interface Panel {
+  id: string;
+  number: string;
+  title: string;
+  kicker: string;
+  image: {
+    src: string;
+    width: number;
+    height: number;
+  };
+  imageAlt: string;
+  description: string;
+  note: string;
+  capabilities: string[];
+  examples: Array<{
+    label: string;
+    href: string;
+  }>;
+}
+
+interface Props {
+  panels: Panel[];
+}
+
+const { panels } = Astro.props;
+---
+
+<div class="details-stage" data-details-stage>
+  <div class="details-stage__placeholder" data-details-placeholder>
+    <span>01 — 03</span>
+    <p>Wybierz jeden z kierunków, aby zobaczyć szczegóły</p>
+  </div>
+
+  {panels.map((panel) => <DetailPanel {...panel} />)}
+</div>
+
+<script>
+  import { gsap } from "gsap";
+  import { SplitText } from "gsap/SplitText";
+
+  gsap.registerPlugin(SplitText);
+
+  const buttons = Array.from(
+    document.querySelectorAll<HTMLButtonElement>("[data-show-direction]"),
+  );
+  const cards = Array.from(
+    document.querySelectorAll<HTMLElement>("[data-direction-card]"),
+  );
+  const panels = Array.from(
+    document.querySelectorAll<HTMLElement>("[data-direction-panel]"),
+  );
+  const placeholder = document.querySelector<HTMLElement>(
+    "[data-details-placeholder]",
+  );
+  const reducedMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)",
+  ).matches;
+  const panelSplits = new WeakMap<HTMLElement, SplitText[]>();
+  const panelTimelines = new WeakMap<HTMLElement, gsap.core.Timeline>();
+
+  const resetPanelAnimation = (panel: HTMLElement) => {
+    panelTimelines.get(panel)?.kill();
+    panelSplits.get(panel)?.forEach((split) => split.revert());
+    panelTimelines.delete(panel);
+    panelSplits.delete(panel);
+  };
+
+  const animatePanel = (panel: HTMLElement) => {
+    resetPanelAnimation(panel);
+    if (reducedMotion) return;
+
+    const number = panel.querySelector<HTMLElement>("[data-animate-number]");
+    const kicker = panel.querySelector<HTMLElement>("[data-split-kicker]");
+    const title = panel.querySelector<HTMLElement>("[data-split-title]");
+    const image = panel.querySelector<HTMLElement>("[data-animate-image]");
+    const lead = panel.querySelector<HTMLElement>("[data-split-lead]");
+    const note = panel.querySelector<HTMLElement>("[data-split-note]");
+    const capabilities = panel.querySelectorAll<HTMLElement>(
+      "[data-animate-capability]",
+    );
+    const examplesLabel = panel.querySelector<HTMLElement>(
+      "[data-animate-examples-label]",
+    );
+    const examples = panel.querySelectorAll<HTMLElement>(
+      "[data-animate-example]",
+    );
+    const closeButton = panel.querySelector<HTMLElement>("[data-close-panel]");
+
+    if (!number || !kicker || !title || !image || !lead || !note) return;
+
+    const kickerSplit = SplitText.create(kicker, {
+      type: "words",
+      wordsClass: "split-word",
+      aria: "auto",
+    });
+    const titleSplit = SplitText.create(title, {
+      type: "chars",
+      charsClass: "split-char",
+      aria: "auto",
+    });
+    const leadSplit = SplitText.create(lead, {
+      type: "lines",
+      linesClass: "split-line",
+      mask: "lines",
+      aria: "auto",
+    });
+    const noteSplit = SplitText.create(note, {
+      type: "words",
+      wordsClass: "split-word",
+      aria: "auto",
+    });
+
+    panelSplits.set(panel, [kickerSplit, titleSplit, leadSplit, noteSplit]);
+
+    const timeline = gsap.timeline({
+      defaults: { ease: "power3.out" },
+    });
+
+    timeline
+      .from(
+        number,
+        {
+          opacity: 0,
+          scale: 0.35,
+          rotation: -24,
+          duration: 0.65,
+          ease: "back.out(1.8)",
+        },
+        0,
+      )
+      .from(
+        closeButton,
+        { opacity: 0, scale: 0.65, rotation: 35, duration: 0.5 },
+        0.08,
+      )
+      .from(
+        kickerSplit.words,
+        {
+          opacity: 0,
+          x: -18,
+          duration: 0.5,
+          stagger: 0.045,
+        },
+        0.12,
+      )
+      .from(
+        titleSplit.chars,
+        {
+          opacity: 0,
+          yPercent: 115,
+          rotationX: -90,
+          transformOrigin: "50% 100%",
+          transformPerspective: 700,
+          duration: 0.72,
+          stagger: { each: 0.028, from: "edges" },
+          ease: "back.out(1.45)",
+        },
+        0.22,
+      )
+      .from(
+        image,
+        {
+          opacity: 0.2,
+          scale: 1.12,
+          clipPath: "inset(8% 48% 8% 48% round 18px)",
+          filter: "blur(12px)",
+          duration: 1.05,
+          ease: "expo.out",
+        },
+        0.25,
+      )
+      .from(
+        leadSplit.lines,
+        {
+          opacity: 0,
+          yPercent: 120,
+          duration: 0.72,
+          stagger: 0.09,
+        },
+        0.58,
+      )
+      .from(
+        noteSplit.words,
+        {
+          opacity: 0,
+          y: 12,
+          filter: "blur(5px)",
+          duration: 0.45,
+          stagger: 0.018,
+        },
+        0.78,
+      )
+      .from(
+        capabilities,
+        {
+          opacity: 0,
+          y: 28,
+          scale: 0.94,
+          duration: 0.58,
+          stagger: 0.08,
+          ease: "back.out(1.35)",
+        },
+        1.02,
+      )
+      .from(examplesLabel, { opacity: 0, x: -16, duration: 0.42 }, 1.18)
+      .from(
+        examples,
+        {
+          opacity: 0,
+          x: 18,
+          duration: 0.48,
+          stagger: 0.07,
+        },
+        1.22,
+      );
+
+    timeline.timeScale(0.5);
+    panelTimelines.set(panel, timeline);
+  };
+
+  const clearHash = () =>
+    history.replaceState(null, "", `${location.pathname}${location.search}`);
+
+  const closeAll = () => {
+    buttons.forEach((button) => {
+      button.setAttribute("aria-expanded", "false");
+      button.querySelector<HTMLElement>("[data-button-label]")!.textContent =
+        "SHOW";
+    });
+    cards.forEach((card) => card.removeAttribute("data-active"));
+    panels.forEach((panel) => {
+      panel.hidden = true;
+      panel.removeAttribute("data-visible");
+    });
+    if (placeholder) placeholder.hidden = false;
+  };
+
+  buttons.forEach((button) => {
+    button.addEventListener("click", () => {
+      const id = button.dataset.showDirection;
+      const wasOpen = button.getAttribute("aria-expanded") === "true";
+      closeAll();
+
+      if (!id || wasOpen) {
+        clearHash();
+        return;
+      }
+
+      const panel = document.querySelector<HTMLElement>(
+        `[data-direction-panel="${id}"]`,
+      );
+      const card = document.querySelector<HTMLElement>(
+        `[data-direction-card="${id}"]`,
+      );
+      if (!panel || !card) return;
+
+      button.setAttribute("aria-expanded", "true");
+      button.querySelector<HTMLElement>("[data-button-label]")!.textContent =
+        "CLOSE";
+      card.setAttribute("data-active", "true");
+      if (placeholder) placeholder.hidden = true;
+      panel.hidden = false;
+      requestAnimationFrame(() => {
+        panel.setAttribute("data-visible", "true");
+        animatePanel(panel);
+      });
+      history.replaceState(null, "", `#${id}`);
+      panel.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  });
+
+  document
+    .querySelectorAll<HTMLButtonElement>("[data-close-panel]")
+    .forEach((button) => {
+      button.addEventListener("click", () => {
+        closeAll();
+        clearHash();
+      });
+    });
+
+  const initialId = location.hash.slice(1);
+  const initialButton = buttons.find(
+    (button) => button.dataset.showDirection === initialId,
+  );
+  initialButton?.click();
+</script>

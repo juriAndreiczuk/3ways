@@ -1,0 +1,467 @@
+<div
+  class="intro-three-scene"
+  data-three-intro
+  aria-label="Trójwymiarowa wizualizacja współpracy Marketingu i IT"
+>
+  <canvas class="intro-three-scene__canvas" data-three-canvas aria-hidden="true"
+  ></canvas>
+
+  <div class="intro-three-scene__labels" aria-hidden="true">
+    <span>MARKETING</span>
+    <span>IT</span>
+  </div>
+
+  <div class="intro-three-scene__controls">
+    <div class="intro-three-scene__legend" aria-live="polite">
+      <span class="intro-three-scene__pulse" aria-hidden="true"></span>
+      <p data-mode-label>Komunikacja jednokierunkowa</p>
+    </div>
+
+    <button
+      class="intro-three-scene__toggle"
+      type="button"
+      data-mode-toggle
+      aria-pressed="false"
+    >
+      <span data-toggle-label>Włącz współpracę</span>
+      <span class="intro-three-scene__toggle-arrow" aria-hidden="true">↔</span>
+    </button>
+  </div>
+</div>
+
+<script>
+  import * as THREE from "three";
+  import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
+  import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
+  import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
+  import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
+
+  let introCleanup: (() => void) | undefined;
+
+  const initialiseScene = (host: HTMLElement) => {
+    const canvas = host.querySelector<HTMLCanvasElement>("[data-three-canvas]");
+    const modeLabel = host.querySelector<HTMLElement>("[data-mode-label]");
+    const modeToggle =
+      host.querySelector<HTMLButtonElement>("[data-mode-toggle]");
+    const toggleLabel = host.querySelector<HTMLElement>("[data-toggle-label]");
+    if (!canvas) return;
+
+    try {
+      const context = canvas.getContext("webgl2", {
+        alpha: true,
+        antialias: true,
+        powerPreference: "high-performance",
+      });
+      if (!context) throw new Error("WebGL 2 is unavailable");
+
+      const renderer = new THREE.WebGLRenderer({
+        canvas,
+        context,
+        alpha: true,
+        antialias: true,
+        powerPreference: "high-performance",
+      });
+      renderer.setClearColor(0x000000, 0);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.25));
+      renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      renderer.toneMappingExposure = 0.78;
+
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 50);
+      camera.position.set(0, 0, 7.2);
+
+      const root = new THREE.Group();
+      scene.add(root);
+
+      const violet = 0xa855f7;
+      const blue = 0x5b6cff;
+      const cyan = 0x13d8ff;
+      const glowLayers: Array<{
+        material: THREE.MeshBasicMaterial;
+        dim: number;
+        bright: number;
+      }> = [];
+
+      const makeNode = (radius: number, color: number) => {
+        const group = new THREE.Group();
+        const geometry = new THREE.IcosahedronGeometry(radius, 3);
+        const core = new THREE.Mesh(
+          geometry,
+          new THREE.MeshBasicMaterial({
+            color,
+            transparent: true,
+            opacity: 0.025,
+            blending: THREE.AdditiveBlending,
+            depthWrite: false,
+          }),
+        );
+        const shell = new THREE.Mesh(
+          geometry,
+          new THREE.MeshBasicMaterial({
+            color,
+            wireframe: true,
+            transparent: true,
+            opacity: 0.42,
+            depthWrite: false,
+          }),
+        );
+        const halo = new THREE.Mesh(
+          new THREE.TorusGeometry(radius * 1.28, radius * 0.022, 8, 64),
+          new THREE.MeshBasicMaterial({
+            color,
+            transparent: true,
+            opacity: 0.2,
+            blending: THREE.AdditiveBlending,
+            depthWrite: false,
+          }),
+        );
+        group.add(core, shell, halo);
+        glowLayers.push(
+          {
+            material: core.material as THREE.MeshBasicMaterial,
+            dim: 0.025,
+            bright: 0.075,
+          },
+          {
+            material: shell.material as THREE.MeshBasicMaterial,
+            dim: 0.42,
+            bright: 0.76,
+          },
+          {
+            material: halo.material as THREE.MeshBasicMaterial,
+            dim: 0.2,
+            bright: 0.55,
+          },
+        );
+        return group;
+      };
+
+      const marketing = makeNode(0.72, violet);
+      marketing.position.set(-2.15, 0, 0);
+      root.add(marketing);
+
+      const itGroup = new THREE.Group();
+      itGroup.position.set(2.12, 0, 0);
+      const itCore = makeNode(0.46, cyan);
+      itGroup.add(itCore);
+      const itSatellites: THREE.Group[] = [];
+
+      const satellitePositions = [
+        [-0.72, -0.24, 0.04],
+        [0.72, -0.24, -0.04],
+        [0, 0.78, 0.02],
+      ];
+      satellitePositions.forEach(([x, y, z]) => {
+        const satellite = makeNode(0.25, cyan);
+        satellite.position.set(x, y, z);
+        itSatellites.push(satellite);
+        itGroup.add(satellite);
+
+        const lineGeometry = new THREE.BufferGeometry().setFromPoints([
+          new THREE.Vector3(0, 0, 0),
+          new THREE.Vector3(x * 0.82, y * 0.82, z),
+        ]);
+        const line = new THREE.Line(
+          lineGeometry,
+          new THREE.LineBasicMaterial({
+            color: cyan,
+            transparent: true,
+            opacity: 0.42,
+          }),
+        );
+        itGroup.add(line);
+      });
+
+      const teamOrbit = new THREE.Mesh(
+        new THREE.TorusGeometry(0.98, 0.012, 6, 80),
+        new THREE.MeshBasicMaterial({
+          color: cyan,
+          transparent: true,
+          opacity: 0.3,
+          depthWrite: false,
+        }),
+      );
+      teamOrbit.rotation.x = 0.12;
+      itGroup.add(teamOrbit);
+      root.add(itGroup);
+
+      const grid = new THREE.GridHelper(8, 22, blue, blue);
+      grid.rotation.x = Math.PI / 2;
+      grid.position.z = -1.35;
+      const gridMaterials = Array.isArray(grid.material)
+        ? grid.material
+        : [grid.material];
+      gridMaterials.forEach((material) => {
+        material.transparent = true;
+        material.opacity = 0.075;
+        material.depthWrite = false;
+      });
+      root.add(grid);
+
+      const makeFlow = (color: number, count = 46) => {
+        const geometry = new THREE.BufferGeometry();
+        const positions = new Float32Array(count * 3);
+        geometry.setAttribute(
+          "position",
+          new THREE.BufferAttribute(positions, 3),
+        );
+        const material = new THREE.PointsMaterial({
+          color,
+          size: 0.052,
+          transparent: true,
+          opacity: 0.78,
+          blending: THREE.AdditiveBlending,
+          depthWrite: false,
+          sizeAttenuation: true,
+        });
+        return {
+          points: new THREE.Points(geometry, material),
+          positions,
+          material,
+          count,
+        };
+      };
+
+      const forwardFlow = makeFlow(violet);
+      const reverseFlow = makeFlow(cyan, 40);
+      root.add(forwardFlow.points, reverseFlow.points);
+
+      const makeArrow = (color: number, direction: 1 | -1) => {
+        const arrow = new THREE.Mesh(
+          new THREE.ConeGeometry(0.12, 0.34, 12),
+          new THREE.MeshBasicMaterial({
+            color,
+            transparent: true,
+            opacity: 0.9,
+            blending: THREE.AdditiveBlending,
+            depthWrite: false,
+          }),
+        );
+        arrow.rotation.z = direction === 1 ? -Math.PI / 2 : Math.PI / 2;
+        arrow.position.set(
+          direction === 1 ? 1.24 : -1.25,
+          direction === 1 ? 0.22 : -0.25,
+          0,
+        );
+        return arrow;
+      };
+
+      const forwardArrow = makeArrow(violet, 1);
+      const reverseArrow = makeArrow(cyan, -1);
+      root.add(forwardArrow, reverseArrow);
+
+      const composer = new EffectComposer(renderer);
+      composer.addPass(new RenderPass(scene, camera));
+      const bloomPass = new UnrealBloomPass(
+        new THREE.Vector2(1, 1),
+        0.18,
+        0.24,
+        0.2,
+      );
+      composer.addPass(bloomPass);
+      composer.addPass(new OutputPass());
+
+      const pointer = new THREE.Vector2();
+      const targetPointer = new THREE.Vector2();
+      host.addEventListener("pointermove", (event) => {
+        const bounds = host.getBoundingClientRect();
+        targetPointer.set(
+          ((event.clientX - bounds.left) / bounds.width - 0.5) * 2,
+          -((event.clientY - bounds.top) / bounds.height - 0.5) * 2,
+        );
+      });
+      host.addEventListener("pointerleave", () => targetPointer.set(0, 0));
+
+      const resize = () => {
+        const width = Math.max(host.clientWidth, 1);
+        const height = Math.max(host.clientHeight, 1);
+        renderer.setSize(width, height, false);
+        composer.setSize(width, height);
+        camera.aspect = width / height;
+        camera.updateProjectionMatrix();
+      };
+      const resizeObserver = new ResizeObserver(resize);
+      resizeObserver.observe(host);
+      resize();
+
+      let elapsed = 0;
+      let previousTime = performance.now();
+      let lastRendered = 0;
+      let frameId = 0;
+      let running = false;
+      let collaborationActive = false;
+      let collaboration = 0;
+      let collaborationTarget = 0;
+      const frameInterval = 1000 / 24;
+
+      modeToggle?.addEventListener("click", () => {
+        collaborationActive = !collaborationActive;
+        collaborationTarget = collaborationActive ? 1 : 0;
+        host.toggleAttribute("data-collaboration", collaborationActive);
+        modeToggle.setAttribute("aria-pressed", String(collaborationActive));
+
+        if (modeLabel) {
+          modeLabel.textContent = collaborationActive
+            ? "Komunikacja dwukierunkowa"
+            : "Komunikacja jednokierunkowa";
+        }
+        if (toggleLabel) {
+          toggleLabel.textContent = collaborationActive
+            ? "Wyłącz współpracę"
+            : "Włącz współpracę";
+        }
+      });
+
+      const updateFlow = (
+        flow: typeof forwardFlow,
+        time: number,
+        direction: 1 | -1,
+        lane: number,
+      ) => {
+        for (let index = 0; index < flow.count; index += 1) {
+          const base = index / flow.count;
+          const progress = (base + time * 0.105) % 1;
+          const directed = direction === 1 ? progress : 1 - progress;
+          const offset = index * 3;
+          flow.positions[offset] = THREE.MathUtils.lerp(-1.3, 1.3, directed);
+          flow.positions[offset + 1] =
+            lane + Math.sin(progress * Math.PI) * 0.17 * direction;
+          flow.positions[offset + 2] = Math.sin(progress * Math.PI * 2) * 0.09;
+        }
+        flow.points.geometry.attributes.position.needsUpdate = true;
+      };
+
+      const render = (time: number) => {
+        if (!running) return;
+        frameId = requestAnimationFrame(render);
+        if (time - lastRendered < frameInterval) return;
+
+        const delta = Math.min((time - previousTime) / 1000, 0.08);
+        previousTime = time;
+        lastRendered = time;
+        elapsed += delta;
+
+        collaboration = THREE.MathUtils.damp(
+          collaboration,
+          collaborationTarget,
+          2,
+          delta,
+        );
+        const glowPulse = 1 + Math.sin(elapsed * 2.4) * 0.09 * collaboration;
+        glowLayers.forEach(({ material, dim, bright }) => {
+          material.opacity =
+            THREE.MathUtils.lerp(dim, bright, collaboration) * glowPulse;
+        });
+        bloomPass.strength =
+          THREE.MathUtils.lerp(0.18, 0.62, collaboration) * glowPulse;
+        renderer.toneMappingExposure = THREE.MathUtils.lerp(
+          0.68,
+          0.86,
+          collaboration,
+        );
+
+        forwardFlow.material.opacity = THREE.MathUtils.lerp(
+          0.48,
+          0.84,
+          collaboration,
+        );
+        reverseFlow.material.opacity = collaboration * 0.78;
+        (reverseArrow.material as THREE.MeshBasicMaterial).opacity =
+          collaboration * 0.76;
+        (forwardArrow.material as THREE.MeshBasicMaterial).opacity =
+          THREE.MathUtils.lerp(0.55, 0.9, collaboration);
+
+        updateFlow(forwardFlow, elapsed, 1, 0.22);
+        updateFlow(reverseFlow, elapsed, -1, -0.25);
+
+        marketing.rotation.y += delta * (0.18 + collaboration * 0.12);
+        marketing.rotation.x += delta * (0.09 + collaboration * 0.055);
+        itGroup.rotation.y -= delta * (0.13 + collaboration * 0.09);
+        itCore.rotation.x += delta * (0.12 + collaboration * 0.1);
+        itCore.rotation.y -= delta * collaboration * 0.075;
+        itSatellites.forEach((satellite, index) => {
+          const direction = index % 2 === 0 ? 1 : -1;
+          satellite.rotation.y += delta * collaboration * 0.22 * direction;
+          satellite.rotation.x += delta * collaboration * 0.11;
+        });
+        teamOrbit.rotation.z += delta * (0.04 + collaboration * 0.2);
+        marketing.position.x = THREE.MathUtils.lerp(-2.15, -1.54, collaboration);
+        itGroup.position.x = THREE.MathUtils.lerp(2.12, 1.54, collaboration);
+        const activeScale = 1 + collaboration * 0.045;
+        marketing.scale.setScalar(activeScale);
+        itGroup.scale.setScalar(activeScale);
+        forwardArrow.scale.setScalar(1 + collaboration * 0.2);
+        reverseArrow.scale.setScalar(0.75 + collaboration * 0.45);
+
+        pointer.lerp(targetPointer, 0.045);
+        root.rotation.y = pointer.x * 0.12;
+        root.rotation.x = pointer.y * 0.07;
+        camera.position.x = pointer.x * 0.18;
+        camera.position.y = pointer.y * 0.12;
+        camera.lookAt(0, 0, 0);
+
+        composer.render();
+      };
+
+      const start = () => {
+        if (running || document.hidden) return;
+        running = true;
+        previousTime = performance.now();
+        frameId = requestAnimationFrame(render);
+      };
+      const stop = () => {
+        running = false;
+        cancelAnimationFrame(frameId);
+      };
+
+      const visibilityObserver = new IntersectionObserver(
+        ([entry]) => (entry?.isIntersecting ? start() : stop()),
+        { threshold: 0.08 },
+      );
+      visibilityObserver.observe(host);
+      const handleVisibility = () => (document.hidden ? stop() : start());
+      document.addEventListener("visibilitychange", handleVisibility);
+
+      host.dataset.ready = "true";
+      composer.render();
+      return () => {
+        stop();
+        resizeObserver.disconnect();
+        visibilityObserver.disconnect();
+        document.removeEventListener("visibilitychange", handleVisibility);
+        composer.dispose();
+        renderer.dispose();
+        scene.traverse((object) => {
+          if (
+            object instanceof THREE.Mesh ||
+            object instanceof THREE.Points ||
+            object instanceof THREE.Line
+          ) {
+            object.geometry?.dispose();
+            const materials = Array.isArray(object.material)
+              ? object.material
+              : [object.material];
+            materials.forEach((material) => material?.dispose());
+          }
+        });
+      };
+    } catch {
+      host.dataset.ready = "false";
+    }
+  };
+
+  const initialiseIntro = () => {
+    introCleanup?.();
+    introCleanup = undefined;
+    const host = document.querySelector<HTMLElement>("[data-three-intro]");
+    if (host) introCleanup = initialiseScene(host);
+  };
+
+  const cleanupIntro = () => {
+    introCleanup?.();
+    introCleanup = undefined;
+  };
+
+  document.addEventListener("astro:page-load", initialiseIntro);
+  document.addEventListener("astro:before-swap", cleanupIntro);
+</script>

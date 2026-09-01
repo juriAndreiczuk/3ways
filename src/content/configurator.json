@@ -1,0 +1,1132 @@
+{
+  "config": {
+    "title": "Znajdź kierunek dla siebie",
+    "description": "Najpierw wybierz rodzaj studiów, a następnie odpowiedz na kilka pytań.",
+    "courseTypeSelectionTitle": "Wybierz rodzaj studiów",
+    "courseTypes": ["podyplomowe", "licencjackie"]
+  },
+  "courseTypes": [
+    {
+      "id": "podyplomowe",
+      "name": "Studia podyplomowe",
+      "config": {
+        "title": "Znajdź kierunek dla siebie",
+        "description": "Odpowiedz na 5 krótkich pytań i zobacz kierunki oraz kursy, które mogą pasować do Twoich zainteresowań.",
+        "questionsPerSession": 5,
+        "resultsLimit": 4,
+        "primaryResultLabel": "Najlepsze dopasowanie",
+        "secondaryResultLabel": "Może Ci również pasować",
+        "additionalResultLabel": "Warto również rozważyć"
+      },
+      "categories": [
+        {
+          "id": "pedagogika",
+          "name": "PEDAGOGIKA"
+        },
+        {
+          "id": "prawo",
+          "name": "PRAWO"
+        },
+        {
+          "id": "sport",
+          "name": "SPORT"
+        },
+        {
+          "id": "zdrowie",
+          "name": "ZDROWIE"
+        },
+        {
+          "id": "biznes",
+          "name": "BIZNES"
+        }
+      ],
+      "courses": [
+        {
+          "id": "ped-psych",
+          "categoryId": "pedagogika",
+          "name": "Przygotowanie pedagogiczne dla psychologów",
+          "link": "https://studia-online.pl/studia/podyplomowe/przygotowanie-pedagogiczne-dla-psychologow/4866677",
+          "price": 499,
+          "amount": 10
+        },
+        {
+          "id": "ped-language",
+          "categoryId": "pedagogika",
+          "name": "Przygotowanie pedagogiczne do nauczania języka obcego",
+          "link": "https://studia-online.pl/studia/podyplomowe/przygotowanie-pedagogiczne-do-nauczania-jezyka-obcego/626",
+          "price": 519,
+          "amount": 10
+        },
+        {
+          "id": "ped-vocational",
+          "categoryId": "pedagogika",
+          "name": "Przygotowanie pedagogiczne do nauczania przedmiotów zawodowych",
+          "link": "https://studia-online.pl/studia/podyplomowe/przygotowanie-pedagogiczne-do-nauczania-przedmiotow-zawodowych/4867030",
+          "price": 519,
+          "amount": 10
+        },
+        {
+          "id": "law-work",
+          "categoryId": "prawo",
+          "name": "Prawo pracy",
+          "link": "https://studia-online.pl/studia/podyplomowe/prawo-pracy/4867049",
+          "price": 359,
+          "amount": 10
+        },
+        {
+          "id": "law-criminal",
+          "categoryId": "prawo",
+          "name": "Prawo karne materialne i procesowe",
+          "link": "https://studia-online.pl/studia/podyplomowe/prawo-karne-materialne-i-procesowe/4867060",
+          "price": 459,
+          "amount": 10
+        },
+        {
+          "id": "law-enforcement",
+          "categoryId": "prawo",
+          "name": "Prawo karne wykonawcze",
+          "link": "https://studia-online.pl/studia/podyplomowe/prawo-karne-wykonawcze/4867067",
+          "price": 359,
+          "amount": 10
+        },
+        {
+          "id": "sport-adapted",
+          "categoryId": "sport",
+          "name": "Adaptowana aktywność fizyczna",
+          "link": "https://studia-online.pl/studia/podyplomowe/adaptowana-aktywnosc-fizyczna/4867143",
+          "price": 359,
+          "amount": 10
+        },
+        {
+          "id": "sport-analyst",
+          "categoryId": "sport",
+          "name": "Analityk gry sportowej",
+          "link": "https://studia-online.pl/studia/podyplomowe/analityk-gry-sportowej/4867145",
+          "price": 359,
+          "amount": 10
+        },
+        {
+          "id": "sport-dance",
+          "categoryId": "sport",
+          "name": "Animacja form taneczno-ruchowych",
+          "link": "https://studia-online.pl/studia/podyplomowe/animacja-form-taneczno-ruchowych/4867152",
+          "price": 339,
+          "amount": 10
+        },
+        {
+          "id": "health-cosmetology",
+          "categoryId": "zdrowie",
+          "name": "Kosmetologia",
+          "link": "https://studia-online.pl/studia/podyplomowe/kosmetologia/4867918",
+          "price": 459,
+          "amount": 10
+        },
+        {
+          "id": "health-styling",
+          "categoryId": "zdrowie",
+          "name": "Stylizacja i wizaż",
+          "link": "https://studia-online.pl/studia/podyplomowe/stylizacja-i-wizaz/4867927",
+          "price": 399,
+          "amount": 10
+        },
+        {
+          "id": "health-podology",
+          "categoryId": "zdrowie",
+          "name": "Podologia",
+          "link": "https://studia-online.pl/studia/podyplomowe/podologia/4867924",
+          "price": 479,
+          "amount": 10
+        },
+        {
+          "id": "business-career",
+          "categoryId": "biznes",
+          "name": "Doradztwo zawodowe",
+          "link": "https://studia-online.pl/studia/podyplomowe/doradztwo-zawodowe-2-sem-instytucje-rynku-pracy/103",
+          "price": 339,
+          "amount": 10
+        },
+        {
+          "id": "business-eco",
+          "categoryId": "biznes",
+          "name": "Ekologia w biznesie",
+          "link": "https://studia-online.pl/studia/podyplomowe/ekologia-w-biznesie/4867981",
+          "price": 379,
+          "amount": 10
+        },
+        {
+          "id": "business-english",
+          "categoryId": "biznes",
+          "name": "Business English",
+          "link": "https://studia-online.pl/studia/podyplomowe/business-english-jezyk-angielski-w-biznesie/4868000",
+          "price": 419,
+          "amount": 10
+        }
+      ],
+      "questions": [
+        {
+          "id": "q1",
+          "type": "routing",
+          "question": "Który obszar najbardziej Cię interesuje?",
+          "answers": [
+            {
+              "id": "A",
+              "label": "Edukacja i praca z ludźmi",
+              "nextQuestionId": "q2-pedagogika",
+              "scores": {
+                "ped-psych": 3,
+                "ped-language": 3,
+                "ped-vocational": 3,
+                "business-career": 1
+              }
+            },
+            {
+              "id": "B",
+              "label": "Prawo, zasady i analiza",
+              "nextQuestionId": "q2-prawo",
+              "scores": {
+                "law-work": 3,
+                "law-criminal": 3,
+                "law-enforcement": 3
+              }
+            },
+            {
+              "id": "C",
+              "label": "Sport i aktywność fizyczna",
+              "nextQuestionId": "q2-sport",
+              "scores": {
+                "sport-adapted": 3,
+                "sport-analyst": 3,
+                "sport-dance": 3
+              }
+            },
+            {
+              "id": "D",
+              "label": "Zdrowie, uroda i praca z klientem",
+              "nextQuestionId": "q2-zdrowie",
+              "scores": {
+                "health-cosmetology": 3,
+                "health-styling": 3,
+                "health-podology": 3
+              }
+            },
+            {
+              "id": "E",
+              "label": "Biznes i rozwój zawodowy",
+              "nextQuestionId": "q2-biznes",
+              "scores": {
+                "business-career": 3,
+                "business-eco": 3,
+                "business-english": 3
+              }
+            }
+          ]
+        },
+        {
+          "id": "q2-pedagogika",
+          "type": "scoring",
+          "question": "Z kim najbardziej chciałbyś pracować?",
+          "nextQuestionId": "q3",
+          "answers": [
+            {
+              "id": "A",
+              "label": "Z osobami potrzebującymi wsparcia psychologicznego",
+              "scores": {
+                "ped-psych": 4,
+                "business-career": 1
+              }
+            },
+            {
+              "id": "B",
+              "label": "Z osobami uczącymi się języków",
+              "scores": {
+                "ped-language": 4,
+                "business-english": 2
+              }
+            },
+            {
+              "id": "C",
+              "label": "Z osobami zdobywającymi konkretny zawód",
+              "scores": {
+                "ped-vocational": 4,
+                "business-career": 1
+              }
+            }
+          ]
+        },
+        {
+          "id": "q2-prawo",
+          "type": "scoring",
+          "question": "Który rodzaj problemów wydaje Ci się najbardziej interesujący?",
+          "nextQuestionId": "q3",
+          "answers": [
+            {
+              "id": "A",
+              "label": "Relacje między pracownikiem a pracodawcą",
+              "scores": {
+                "law-work": 4,
+                "business-career": 1
+              }
+            },
+            {
+              "id": "B",
+              "label": "Analiza przestępstw, odpowiedzialności i procedur",
+              "scores": {
+                "law-criminal": 4
+              }
+            },
+            {
+              "id": "C",
+              "label": "Wykonywanie kar i funkcjonowanie systemu penitencjarnego",
+              "scores": {
+                "law-enforcement": 4
+              }
+            }
+          ]
+        },
+        {
+          "id": "q2-sport",
+          "type": "scoring",
+          "question": "Co najbardziej interesuje Cię w sporcie?",
+          "nextQuestionId": "q3",
+          "answers": [
+            {
+              "id": "A",
+              "label": "Pomaganie ludziom poprzez odpowiednio dobraną aktywność",
+              "scores": {
+                "sport-adapted": 4,
+                "health-podology": 1
+              }
+            },
+            {
+              "id": "B",
+              "label": "Analiza wyników, taktyki i danych",
+              "scores": {
+                "sport-analyst": 4,
+                "business-eco": 1
+              }
+            },
+            {
+              "id": "C",
+              "label": "Ruch, muzyka i praca kreatywna",
+              "scores": {
+                "sport-dance": 4,
+                "health-styling": 1
+              }
+            }
+          ]
+        },
+        {
+          "id": "q2-zdrowie",
+          "type": "scoring",
+          "question": "Który rodzaj pracy najbardziej Ci odpowiada?",
+          "nextQuestionId": "q3",
+          "answers": [
+            {
+              "id": "A",
+              "label": "Pielęgnacja skóry i zabiegi kosmetyczne",
+              "scores": {
+                "health-cosmetology": 4
+              }
+            },
+            {
+              "id": "B",
+              "label": "Styl, makijaż i kreowanie wizerunku",
+              "scores": {
+                "health-styling": 4
+              }
+            },
+            {
+              "id": "C",
+              "label": "Zdrowie stóp i praca wymagająca precyzji",
+              "scores": {
+                "health-podology": 4,
+                "sport-adapted": 1
+              }
+            }
+          ]
+        },
+        {
+          "id": "q2-biznes",
+          "type": "scoring",
+          "question": "W którym obszarze biznesowym widzisz siebie najbardziej?",
+          "nextQuestionId": "q3",
+          "answers": [
+            {
+              "id": "A",
+              "label": "Pomaganie ludziom w rozwoju kariery",
+              "scores": {
+                "business-career": 4,
+                "ped-psych": 1
+              }
+            },
+            {
+              "id": "B",
+              "label": "Łączenie biznesu z ekologią i zrównoważonym rozwojem",
+              "scores": {
+                "business-eco": 4
+              }
+            },
+            {
+              "id": "C",
+              "label": "Komunikacja międzynarodowa i język angielski",
+              "scores": {
+                "business-english": 4,
+                "ped-language": 2
+              }
+            }
+          ]
+        },
+        {
+          "id": "q3",
+          "type": "scoring",
+          "question": "Jaki sposób pracy najbardziej Ci odpowiada?",
+          "nextQuestionId": "q4",
+          "answers": [
+            {
+              "id": "A",
+              "label": "Kontakt z ludźmi, rozmowa i wspieranie innych",
+              "scores": {
+                "ped-psych": 2,
+                "ped-language": 1,
+                "business-career": 3,
+                "health-cosmetology": 1,
+                "health-styling": 1
+              }
+            },
+            {
+              "id": "B",
+              "label": "Analiza informacji, zasad i danych",
+              "scores": {
+                "law-work": 2,
+                "law-criminal": 2,
+                "law-enforcement": 1,
+                "sport-analyst": 3,
+                "business-eco": 2
+              }
+            },
+            {
+              "id": "C",
+              "label": "Praktyczne działanie i widoczny efekt pracy",
+              "scores": {
+                "ped-vocational": 1,
+                "sport-adapted": 2,
+                "sport-dance": 2,
+                "health-cosmetology": 2,
+                "health-styling": 2,
+                "health-podology": 2
+              }
+            }
+          ]
+        },
+        {
+          "id": "q4",
+          "type": "scoring",
+          "question": "Co daje Ci największą satysfakcję?",
+          "nextQuestionId": "q5",
+          "answers": [
+            {
+              "id": "A",
+              "label": "Widzieć rozwój drugiej osoby",
+              "scores": {
+                "ped-psych": 3,
+                "ped-language": 2,
+                "ped-vocational": 2,
+                "business-career": 3
+              }
+            },
+            {
+              "id": "B",
+              "label": "Rozwiązać trudny problem i znaleźć konkretne rozwiązanie",
+              "scores": {
+                "law-work": 2,
+                "law-criminal": 3,
+                "law-enforcement": 2,
+                "sport-analyst": 2,
+                "business-eco": 2
+              }
+            },
+            {
+              "id": "C",
+              "label": "Stworzyć coś, czego efekt można od razu zobaczyć",
+              "scores": {
+                "sport-dance": 2,
+                "health-cosmetology": 2,
+                "health-styling": 3,
+                "health-podology": 2
+              }
+            }
+          ]
+        },
+        {
+          "id": "q5",
+          "type": "scoring",
+          "question": "W jakim środowisku najłatwiej wyobrażasz sobie swoją przyszłą pracę?",
+          "nextQuestionId": "q6",
+          "answers": [
+            {
+              "id": "A",
+              "label": "Szkoła, uczelnia, szkolenia lub praca rozwojowa",
+              "scores": {
+                "ped-psych": 2,
+                "ped-language": 3,
+                "ped-vocational": 3,
+                "business-career": 2
+              }
+            },
+            {
+              "id": "B",
+              "label": "Biuro, firma lub organizacja",
+              "scores": {
+                "law-work": 3,
+                "business-career": 2,
+                "business-eco": 3,
+                "business-english": 3
+              }
+            },
+            {
+              "id": "C",
+              "label": "Gabinet, studio, klub lub miejsce pracy praktycznej",
+              "scores": {
+                "sport-adapted": 2,
+                "sport-dance": 2,
+                "health-cosmetology": 3,
+                "health-styling": 3,
+                "health-podology": 3
+              }
+            }
+          ]
+        },
+        {
+          "id": "q6",
+          "type": "scoring",
+          "question": "Co jest dla Ciebie najważniejsze przy wyborze kierunku?",
+          "nextQuestionId": null,
+          "answers": [
+            {
+              "id": "A",
+              "label": "Praca z ludźmi i wspieranie ich rozwoju",
+              "scores": {
+                "ped-psych": 2,
+                "ped-language": 1,
+                "ped-vocational": 1,
+                "sport-adapted": 1,
+                "business-career": 2
+              }
+            },
+            {
+              "id": "B",
+              "label": "Specjalistyczna wiedza, analiza i jasno określone zasady",
+              "scores": {
+                "law-work": 2,
+                "law-criminal": 2,
+                "law-enforcement": 2,
+                "sport-analyst": 2,
+                "business-eco": 1
+              }
+            },
+            {
+              "id": "C",
+              "label": "Praktyczne umiejętności, które mogę wykorzystać w pracy",
+              "scores": {
+                "ped-vocational": 1,
+                "sport-adapted": 1,
+                "sport-dance": 2,
+                "health-cosmetology": 2,
+                "health-styling": 2,
+                "health-podology": 2,
+                "business-english": 1
+              }
+            }
+          ]
+        }
+      ],
+      "resultLogic": {
+        "strategy": "highest_score",
+        "sort": "descending",
+        "primaryResult": 1,
+        "alternativeResults": 3,
+        "tieBreaker": "first_higher_score_from_routing_question"
+      },
+      "resultTemplate": {
+        "heading": "Na podstawie Twoich odpowiedzi",
+        "primary": {
+          "label": "Najlepsze dopasowanie",
+          "categoryField": "category.name",
+          "courseField": "course.name"
+        },
+        "alternatives": {
+          "label": "Inne kierunki, które warto rozważyć",
+          "count": 3
+        },
+        "cta": {
+          "label": "Zobacz kurs",
+          "secondaryLabel": "Sprawdź inne możliwości"
+        }
+      }
+    },
+    {
+      "id": "licencjackie",
+      "name": "Studia licencjackie",
+      "config": {
+        "title": "Znajdź kierunek studiów licencjackich dla siebie",
+        "description": "Odpowiedz na 5 krótkich pytań i zobacz kierunki, które mogą pasować do Twoich zainteresowań.",
+        "questionsPerSession": 5,
+        "resultsLimit": 4,
+        "primaryResultLabel": "Najlepsze dopasowanie",
+        "secondaryResultLabel": "Może Ci również pasować",
+        "additionalResultLabel": "Warto również rozważyć"
+      },
+      "categories": [
+        {
+          "id": "it",
+          "name": "IT"
+        },
+        {
+          "id": "biznes",
+          "name": "BIZNES"
+        },
+        {
+          "id": "pedagogika",
+          "name": "PEDAGOGIKA"
+        },
+        {
+          "id": "prawo",
+          "name": "PRAWO"
+        },
+        {
+          "id": "psychologia",
+          "name": "PSYCHOLOGIA"
+        }
+      ],
+      "courses": [
+        {
+          "id": "lic-it-cybersecurity",
+          "categoryId": "it",
+          "name": "Cyberbezpieczeństwo",
+          "link": "https://studia-online.pl/studia/licencjackie/cyberbezpieczenstwo/4869297",
+          "price": 399,
+          "amount": 30
+        },
+        {
+          "id": "lic-it-marketing-ai",
+          "categoryId": "it",
+          "name": "Marketing automation z elementami AI",
+          "link": "https://studia-online.pl/studia/licencjackie/digital-marketing-i-marketing-automation-z-elementami-ai/4870256",
+          "price": 419,
+          "amount": 30
+        },
+        {
+          "id": "lic-it-data-protection",
+          "categoryId": "it",
+          "name": "Ochrona danych osobowych",
+          "link": "https://studia-online.pl/studia/licencjackie/ochrona-danych-osobowych/4870220",
+          "price": 369,
+          "amount": 30
+        },
+        {
+          "id": "lic-business-finance",
+          "categoryId": "biznes",
+          "name": "Finanse i Rachunkowość",
+          "link": "https://studia-online.pl/studia/licencjackie/finanse-i-rachunkowosc/4869270",
+          "price": 499,
+          "amount": 30
+        },
+        {
+          "id": "lic-business-information",
+          "categoryId": "biznes",
+          "name": "Zarządzanie informacją",
+          "link": "https://studia-online.pl/studia/licencjackie/zarzadanie-informacja/4870283",
+          "price": 369,
+          "amount": 30
+        },
+        {
+          "id": "lic-business-production",
+          "categoryId": "biznes",
+          "name": "Zarządzanie produkcją, jakością i usługami",
+          "link": "https://studia-online.pl/studia/licencjackie/zarzadzanie-produkcja-jakoscia-i-uslugami/4870265",
+          "price": 419,
+          "amount": 30
+        },
+        {
+          "id": "lic-ped-small-child",
+          "categoryId": "pedagogika",
+          "name": "Pedagogika małego dziecka",
+          "link": "https://studia-online.pl/studia/licencjackie/pedagogika-malego-dziecka/4870157",
+          "price": 489,
+          "amount": 30
+        },
+        {
+          "id": "lic-ped-care",
+          "categoryId": "pedagogika",
+          "name": "Pedagogika opiekuńczo-wychowawcza",
+          "link": "https://studia-online.pl/studia/licencjackie/pedagogika-opiekunczo-wychowawcza-z-profilaktyka-spoleczna/4870139",
+          "price": 419,
+          "amount": 30
+        },
+        {
+          "id": "lic-ped-arttherapy",
+          "categoryId": "pedagogika",
+          "name": "Arteterapia, choreoterapia, muzykoterapia",
+          "link": "https://studia-online.pl/studia/licencjackie/arteterapia-choreoterapia-muzykoterapia/4870175",
+          "price": 419,
+          "amount": 30
+        },
+        {
+          "id": "lic-law-criminology",
+          "categoryId": "prawo",
+          "name": "Kryminologia",
+          "link": "https://studia-online.pl/studia/licencjackie/kryminologia/4869207",
+          "price": 419,
+          "amount": 30
+        },
+        {
+          "id": "lic-law-forensic-psychology",
+          "categoryId": "prawo",
+          "name": "Psychologia sądowa",
+          "link": "https://studia-online.pl/studia/licencjackie/psychologia-sadowa/4869499",
+          "price": 479,
+          "amount": 30
+        },
+        {
+          "id": "lic-law-criminalistics",
+          "categoryId": "prawo",
+          "name": "Kryminalistyka i zwalczanie przestępczości",
+          "link": "https://studia-online.pl/studia/licencjackie/kryminalistyka-i-zwalczanie-przestepczosci/4869727",
+          "price": 419,
+          "amount": 30
+        },
+        {
+          "id": "lic-psych-clinical",
+          "categoryId": "psychologia",
+          "name": "Psychologia kliniczna",
+          "link": "https://studia-online.pl/studia/licencjackie/psychologia-kliniczna/4869481",
+          "price": 479,
+          "amount": 30
+        },
+        {
+          "id": "lic-psych-neuro",
+          "categoryId": "psychologia",
+          "name": "Neuropsychologia",
+          "link": "https://studia-online.pl/studia/licencjackie/neuropsychologia/4869517",
+          "price": 479,
+          "amount": 30
+        },
+        {
+          "id": "lic-psych-social-pathologies",
+          "categoryId": "psychologia",
+          "name": "Patologie społeczne",
+          "link": "https://studia-online.pl/studia/licencjackie/patologie-spoleczne-i-ochrona-ofiar/4870310",
+          "price": 419,
+          "amount": 30
+        }
+      ],
+      "questions": [
+        {
+          "id": "lic-q1",
+          "type": "routing",
+          "question": "Który obszar najbardziej Cię interesuje?",
+          "answers": [
+            {
+              "id": "A",
+              "label": "Technologie, i świat cyfrowy",
+              "nextQuestionId": "lic-q2-it",
+              "scores": {
+                "lic-it-cybersecurity": 3,
+                "lic-it-marketing-ai": 3,
+                "lic-it-data-protection": 3
+              }
+            },
+            {
+              "id": "B",
+              "label": "Biznes, organizacja i zarządzanie",
+              "nextQuestionId": "lic-q2-biznes",
+              "scores": {
+                "lic-business-finance": 3,
+                "lic-business-information": 3,
+                "lic-business-production": 3
+              }
+            },
+            {
+              "id": "C",
+              "label": "Edukacja i rozwój",
+              "nextQuestionId": "lic-q2-pedagogika",
+              "scores": {
+                "lic-ped-small-child": 3,
+                "lic-ped-care": 3,
+                "lic-ped-arttherapy": 3
+              }
+            },
+            {
+              "id": "D",
+              "label": "Prawo i bezpieczeństwo",
+              "nextQuestionId": "lic-q2-prawo",
+              "scores": {
+                "lic-law-criminology": 3,
+                "lic-law-forensic-psychology": 3,
+                "lic-law-criminalistics": 3
+              }
+            },
+            {
+              "id": "E",
+              "label": "Zachowanie człowieka",
+              "nextQuestionId": "lic-q2-psychologia",
+              "scores": {
+                "lic-psych-clinical": 3,
+                "lic-psych-neuro": 3,
+                "lic-psych-social-pathologies": 3
+              }
+            }
+          ]
+        },
+        {
+          "id": "lic-q2-it",
+          "type": "scoring",
+          "question": "Który temat w świecie cyfrowym najbardziej Cię interesuje?",
+          "nextQuestionId": "lic-q3",
+          "answers": [
+            {
+              "id": "A",
+              "label": "Bezpieczeństwo systemów, sieci i danych",
+              "scores": {
+                "lic-it-cybersecurity": 4,
+                "lic-it-data-protection": 1
+              }
+            },
+            {
+              "id": "B",
+              "label": "Marketing cyfrowy, automatyzacja i AI",
+              "scores": {
+                "lic-it-marketing-ai": 4,
+                "lic-business-information": 1
+              }
+            },
+            {
+              "id": "C",
+              "label": "Prywatność, regulacje i ochrona informacji",
+              "scores": {
+                "lic-it-data-protection": 4,
+                "lic-law-criminology": 1
+              }
+            }
+          ]
+        },
+        {
+          "id": "lic-q2-biznes",
+          "type": "scoring",
+          "question": "Który obszar biznesu jest Ci najbliższy?",
+          "nextQuestionId": "lic-q3",
+          "answers": [
+            {
+              "id": "A",
+              "label": "Finanse, liczby i analiza wyników",
+              "scores": {
+                "lic-business-finance": 4
+              }
+            },
+            {
+              "id": "B",
+              "label": "Informacja, procesy i organizacja wiedzy",
+              "scores": {
+                "lic-business-information": 4,
+                "lic-it-marketing-ai": 1
+              }
+            },
+            {
+              "id": "C",
+              "label": "Produkcja, jakość i usprawnianie usług",
+              "scores": {
+                "lic-business-production": 4
+              }
+            }
+          ]
+        },
+        {
+          "id": "lic-q2-pedagogika",
+          "type": "scoring",
+          "question": "Jaki rodzaj pracy z dziećmi najbardziej Cię interesuje?",
+          "nextQuestionId": "lic-q3",
+          "answers": [
+            {
+              "id": "A",
+              "label": "Rozwój i edukacja małego dziecka",
+              "scores": {
+                "lic-ped-small-child": 4
+              }
+            },
+            {
+              "id": "B",
+              "label": "Opieka, wychowanie i profilaktyka społeczna",
+              "scores": {
+                "lic-ped-care": 4,
+                "lic-psych-social-pathologies": 1
+              }
+            },
+            {
+              "id": "C",
+              "label": "Rozwój poprzez sztukę, muzykę i ruch",
+              "scores": {
+                "lic-ped-arttherapy": 4,
+                "lic-ped-small-child": 1
+              }
+            }
+          ]
+        },
+        {
+          "id": "lic-q2-prawo",
+          "type": "scoring",
+          "question": "Który temat związany z przestępczością najbardziej Cię interesuje?",
+          "nextQuestionId": "lic-q3",
+          "answers": [
+            {
+              "id": "A",
+              "label": "Przyczyny i społeczne mechanizmy przestępczości",
+              "scores": {
+                "lic-law-criminology": 4,
+                "lic-psych-social-pathologies": 1
+              }
+            },
+            {
+              "id": "B",
+              "label": "Psychologia sprawców, ofiar i procesów sądowych",
+              "scores": {
+                "lic-law-forensic-psychology": 4,
+                "lic-psych-clinical": 1
+              }
+            },
+            {
+              "id": "C",
+              "label": "Dowody, śledztwa i zwalczanie przestępczości",
+              "scores": {
+                "lic-law-criminalistics": 4,
+                "lic-it-cybersecurity": 1
+              }
+            }
+          ]
+        },
+        {
+          "id": "lic-q2-psychologia",
+          "type": "scoring",
+          "question": "Który obszar psychologii interesuje Cię najbardziej?",
+          "nextQuestionId": "lic-q3",
+          "answers": [
+            {
+              "id": "A",
+              "label": "Diagnoza, zdrowie psychiczne i pomoc człowiekowi",
+              "scores": {
+                "lic-psych-clinical": 4,
+                "lic-law-forensic-psychology": 1
+              }
+            },
+            {
+              "id": "B",
+              "label": "Mózg, pamięć i procesy poznawcze",
+              "scores": {
+                "lic-psych-neuro": 4
+              }
+            },
+            {
+              "id": "C",
+              "label": "Problemy społeczne, zachowania ryzykowne i ochrona ofiar",
+              "scores": {
+                "lic-psych-social-pathologies": 4,
+                "lic-law-criminology": 1
+              }
+            }
+          ]
+        },
+        {
+          "id": "lic-q3",
+          "type": "scoring",
+          "question": "Jaki sposób pracy najbardziej Ci odpowiada?",
+          "nextQuestionId": "lic-q4",
+          "answers": [
+            {
+              "id": "A",
+              "label": "Analizowanie danych, informacji i zależności",
+              "scores": {
+                "lic-it-cybersecurity": 2,
+                "lic-it-data-protection": 2,
+                "lic-business-finance": 3,
+                "lic-business-information": 2,
+                "lic-law-criminology": 2,
+                "lic-law-criminalistics": 2,
+                "lic-psych-neuro": 3
+              }
+            },
+            {
+              "id": "B",
+              "label": "Kontakt z ludźmi i wspieranie ich rozwoju",
+              "scores": {
+                "lic-ped-small-child": 3,
+                "lic-ped-care": 3,
+                "lic-ped-arttherapy": 2,
+                "lic-law-forensic-psychology": 2,
+                "lic-psych-clinical": 3,
+                "lic-psych-social-pathologies": 2
+              }
+            },
+            {
+              "id": "C",
+              "label": "Tworzenie, organizowanie i usprawnianie procesów",
+              "scores": {
+                "lic-it-marketing-ai": 3,
+                "lic-business-information": 2,
+                "lic-business-production": 3,
+                "lic-ped-arttherapy": 1
+              }
+            }
+          ]
+        },
+        {
+          "id": "lic-q4",
+          "type": "scoring",
+          "question": "Co daje Ci największą satysfakcję?",
+          "nextQuestionId": "lic-q5",
+          "answers": [
+            {
+              "id": "A",
+              "label": "Rozwiązanie trudnego problemu",
+              "scores": {
+                "lic-it-cybersecurity": 3,
+                "lic-it-data-protection": 2,
+                "lic-business-finance": 2,
+                "lic-law-criminalistics": 3,
+                "lic-psych-neuro": 2
+              }
+            },
+            {
+              "id": "B",
+              "label": "Widoczny rozwój albo poprawa sytuacji drugiej osoby",
+              "scores": {
+                "lic-ped-small-child": 3,
+                "lic-ped-care": 3,
+                "lic-ped-arttherapy": 2,
+                "lic-law-forensic-psychology": 2,
+                "lic-psych-clinical": 3,
+                "lic-psych-social-pathologies": 2
+              }
+            },
+            {
+              "id": "C",
+              "label": "Stworzenie rozwiązania, które usprawnia pracę lub biznes",
+              "scores": {
+                "lic-it-marketing-ai": 3,
+                "lic-business-information": 3,
+                "lic-business-production": 3,
+                "lic-business-finance": 1
+              }
+            }
+          ]
+        },
+        {
+          "id": "lic-q5",
+          "type": "scoring",
+          "question": "W jakim środowisku najłatwiej wyobrażasz sobie swoją przyszłą pracę?",
+          "nextQuestionId": "lic-q6",
+          "answers": [
+            {
+              "id": "A",
+              "label": "Firma technologiczna, biuro lub środowisko cyfrowe",
+              "scores": {
+                "lic-it-cybersecurity": 3,
+                "lic-it-marketing-ai": 3,
+                "lic-it-data-protection": 2,
+                "lic-business-finance": 2,
+                "lic-business-information": 3,
+                "lic-business-production": 2
+              }
+            },
+            {
+              "id": "B",
+              "label": "Szkoła, placówka edukacyjna lub miejsce pracy z dziećmi",
+              "scores": {
+                "lic-ped-small-child": 3,
+                "lic-ped-care": 3,
+                "lic-ped-arttherapy": 3
+              }
+            },
+            {
+              "id": "C",
+              "label": "Instytucja publiczna, sąd, poradnia lub organizacja pomocowa",
+              "scores": {
+                "lic-law-criminology": 2,
+                "lic-law-forensic-psychology": 3,
+                "lic-law-criminalistics": 2,
+                "lic-psych-clinical": 3,
+                "lic-psych-neuro": 2,
+                "lic-psych-social-pathologies": 3
+              }
+            }
+          ]
+        },
+        {
+          "id": "lic-q6",
+          "type": "scoring",
+          "question": "Które obszary wiedzy przychodzą Ci najbardziej naturalnie?",
+          "nextQuestionId": null,
+          "answers": [
+            {
+              "id": "A",
+              "label": "Technologie, matematyka, ekonomia i praca z informacją",
+              "scores": {
+                "lic-it-cybersecurity": 2,
+                "lic-it-marketing-ai": 2,
+                "lic-it-data-protection": 2,
+                "lic-business-finance": 2,
+                "lic-business-information": 2,
+                "lic-business-production": 2
+              }
+            },
+            {
+              "id": "B",
+              "label": "Psychologia, edukacja, komunikacja i twórcze działanie",
+              "scores": {
+                "lic-ped-small-child": 2,
+                "lic-ped-care": 2,
+                "lic-ped-arttherapy": 2,
+                "lic-psych-clinical": 2,
+                "lic-psych-neuro": 2,
+                "lic-psych-social-pathologies": 2
+              }
+            },
+            {
+              "id": "C",
+              "label": "Prawo, bezpieczeństwo, analiza zachowań i praca z dowodami",
+              "scores": {
+                "lic-law-criminology": 3,
+                "lic-law-forensic-psychology": 3,
+                "lic-law-criminalistics": 3,
+                "lic-it-cybersecurity": 1,
+                "lic-it-data-protection": 1,
+                "lic-psych-social-pathologies": 1
+              }
+            }
+          ]
+        }
+      ],
+      "resultLogic": {
+        "strategy": "highest_score",
+        "sort": "descending",
+        "primaryResult": 1,
+        "alternativeResults": 3,
+        "tieBreaker": "first_higher_score_from_routing_question"
+      },
+      "resultTemplate": {
+        "heading": "Na podstawie Twoich odpowiedzi",
+        "primary": {
+          "label": "Najlepsze dopasowanie",
+          "categoryField": "category.name",
+          "courseField": "course.name"
+        },
+        "alternatives": {
+          "label": "Inne kierunki, które warto rozważyć",
+          "count": 3
+        },
+        "cta": {
+          "label": "Zobacz kierunek",
+          "secondaryLabel": "Sprawdź inne możliwości"
+        }
+      }
+    }
+  ]
+}

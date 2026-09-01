@@ -1,0 +1,238 @@
+<canvas class="show-effects-layer" data-show-effects-layer aria-hidden="true"></canvas>
+
+<script>
+  import { Application, Container, Graphics } from "pixi.js";
+  import { gsap } from "gsap";
+
+  interface FlowParticle {
+    graphic: Graphics;
+    offset: number;
+    speed: number;
+    lane: number;
+  }
+
+  interface ButtonEffect {
+    card: HTMLElement;
+    button: HTMLAnchorElement;
+    content: HTMLElement;
+    root: Container;
+    frame: Graphics;
+    beam: Graphics;
+    particles: FlowParticle[];
+    width: number;
+    height: number;
+    alpha: number;
+    burst: number;
+    hover: boolean;
+    entered: boolean;
+    colour: number;
+  }
+
+  let showEffectsCleanup: (() => void) | undefined;
+
+  const initialiseShowEffects = async () => {
+    showEffectsCleanup?.();
+    showEffectsCleanup = undefined;
+    const canvas = document.querySelector<HTMLCanvasElement>("[data-show-effects-layer]");
+    const grid = canvas?.closest<HTMLElement>(".direction-grid");
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!canvas || !grid) return;
+
+    try {
+        const app = new Application();
+        await app.init({
+          canvas,
+          resizeTo: grid,
+          backgroundAlpha: 0,
+          antialias: true,
+          autoDensity: true,
+          resolution: Math.min(window.devicePixelRatio, 1.25),
+          preference: "webgl",
+          powerPreference: "high-performance",
+        });
+        app.ticker.maxFPS = 24;
+
+        const colours = {
+          violet: 0xa855f7,
+          blue: 0x6677ff,
+          cyan: 0x22d3ee,
+        } as const;
+
+        const effects: ButtonEffect[] = Array.from(
+          grid.querySelectorAll<HTMLElement>("[data-reveal-card]"),
+        ).flatMap((card) => {
+          const button = card.querySelector<HTMLAnchorElement>("[data-show-direction]");
+          const content = card.querySelector<HTMLElement>("[data-card-content]");
+          if (!button || !content) return [];
+
+          const accent = card.dataset.accent as keyof typeof colours;
+          const colour = colours[accent] ?? colours.violet;
+          const root = new Container();
+          const frame = new Graphics();
+          const beam = new Graphics();
+          const particles: FlowParticle[] = Array.from({ length: 22 }, (_, index) => {
+            const radius = index % 5 === 0 ? 2.35 : index % 3 === 0 ? 1.65 : 1.25;
+            const graphic = new Graphics().circle(0, 0, radius).fill({
+              color: colour,
+              alpha: index % 4 === 0 ? 1 : 0.76,
+            });
+            root.addChild(graphic);
+            return {
+              graphic,
+              offset: index / 22,
+              speed: 0.105 + (index % 5) * 0.016,
+              lane: ((index * 17) % 13) / 13,
+            };
+          });
+
+          root.addChildAt(frame, 0);
+          root.addChildAt(beam, 1);
+          root.alpha = 0;
+          app.stage.addChild(root);
+
+          const effect: ButtonEffect = {
+            card,
+            button,
+            content,
+            root,
+            frame,
+            beam,
+            particles,
+            width: 0,
+            height: 0,
+            alpha: 0,
+            burst: 0,
+            hover: false,
+            entered: false,
+            colour,
+          };
+
+          button.addEventListener("pointerenter", () => {
+            effect.hover = true;
+            if (!reducedMotion) {
+              gsap.to(button, { scale: 1.018, duration: 0.9, ease: "power2.out" });
+            }
+          });
+          button.addEventListener("pointerleave", () => {
+            effect.hover = false;
+            if (!reducedMotion) {
+              gsap.to(button, { scale: 1, duration: 1.1, ease: "power2.out" });
+            }
+          });
+          button.addEventListener("click", () => {
+            effect.burst = 1;
+            if (reducedMotion) return;
+            const timeline = gsap.timeline({ defaults: { ease: "power3.out" } });
+            timeline
+              .to(button, { scale: 0.975, duration: 0.18 })
+              .to(button, { scale: 1.025, duration: 0.34 })
+              .to(button, { scale: 1, duration: 0.58 });
+            timeline.timeScale(0.5);
+          });
+
+          card.dataset.showEffectReady = "true";
+          return [effect];
+        });
+
+        let elapsed = 0;
+        app.ticker.add((ticker) => {
+          const delta = Math.min(ticker.deltaMS / 1000, 0.08);
+          elapsed += delta;
+          const canvasBounds = canvas.getBoundingClientRect();
+
+          effects.forEach((effect) => {
+            const disabled = effect.button.getAttribute("aria-disabled") === "true";
+            if (!disabled && !effect.entered) {
+              effect.entered = true;
+              if (!reducedMotion) {
+                gsap.fromTo(
+                  effect.button,
+                  { opacity: 0, y: 14 },
+                  { opacity: 1, y: 0, duration: 1.3, ease: "power3.out" },
+                );
+              }
+            }
+
+            const contentOpacity = Number.parseFloat(getComputedStyle(effect.content).opacity) || 0;
+            const targetAlpha = disabled ? 0 : contentOpacity;
+            effect.alpha += (targetAlpha - effect.alpha) * (1 - Math.exp(-delta * 3.2));
+            effect.burst += (0 - effect.burst) * (1 - Math.exp(-delta * 2.5));
+            effect.root.alpha = effect.alpha;
+            if (effect.alpha < 0.005) return;
+
+            const bounds = effect.button.getBoundingClientRect();
+            const width = Math.max(bounds.width, 1);
+            const height = Math.max(bounds.height, 1);
+            effect.root.position.set(
+              bounds.left - canvasBounds.left,
+              bounds.top - canvasBounds.top,
+            );
+
+            if (width !== effect.width || height !== effect.height) {
+              effect.width = width;
+              effect.height = height;
+              effect.frame
+                .clear()
+                .roundRect(0.5, 0.5, width - 1, height - 1, 14)
+                .stroke({ color: effect.colour, width: 1, alpha: 0.48 });
+              effect.beam
+                .clear()
+                .moveTo(width * 0.31, height * 0.5)
+                .lineTo(width * 0.9, height * 0.5)
+                .stroke({ color: effect.colour, width: 1, alpha: 0.22 });
+            }
+
+            const energy = effect.hover ? 1 : 0;
+            effect.frame.alpha = 0.54 + energy * 0.38 + effect.burst * 0.45;
+            effect.beam.alpha = 0.46 + energy * 0.5 + effect.burst * 0.65;
+
+            effect.particles.forEach((particle, particleIndex) => {
+              const speed = particle.speed * (1 + energy * 2.8 + effect.burst * 4.8);
+              const progress = (particle.offset + elapsed * speed) % 1;
+              const envelope = Math.sin(progress * Math.PI);
+              const wave =
+                Math.sin(elapsed * (1.7 + (particleIndex % 4) * 0.24) + particleIndex * 1.35) *
+                (0.06 + energy * 0.075 + effect.burst * 0.05);
+              particle.graphic.position.set(
+                width * (0.32 + progress * 0.57),
+                height * (0.5 + (particle.lane - 0.5) * 0.46 + wave),
+              );
+              const particlePulse =
+                0.82 + Math.sin(elapsed * 2.4 + particleIndex * 0.9) * 0.18;
+              particle.graphic.scale.set(
+                particlePulse * (1 + energy * 0.22 + effect.burst * 0.55),
+              );
+              particle.graphic.alpha =
+                envelope * (0.48 + energy * 0.34 + effect.burst * 0.5);
+            });
+          });
+        });
+
+        app.stop();
+        const visibilityObserver = new IntersectionObserver(
+          ([entry]) => (entry?.isIntersecting && !document.hidden ? app.start() : app.stop()),
+          { threshold: 0.04 },
+        );
+        visibilityObserver.observe(grid);
+        const handleVisibility = () => (document.hidden ? app.stop() : app.start());
+        document.addEventListener("visibilitychange", handleVisibility);
+        showEffectsCleanup = () => {
+          app.stop();
+          visibilityObserver.disconnect();
+          document.removeEventListener("visibilitychange", handleVisibility);
+          effects.forEach((effect) => gsap.killTweensOf(effect.button));
+          app.destroy();
+        };
+    } catch {
+      canvas.hidden = true;
+    }
+  };
+
+  const cleanupShowEffects = () => {
+    showEffectsCleanup?.();
+    showEffectsCleanup = undefined;
+  };
+
+  document.addEventListener("astro:page-load", () => void initialiseShowEffects());
+  document.addEventListener("astro:before-swap", cleanupShowEffects);
+</script>

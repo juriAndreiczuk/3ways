@@ -1,0 +1,26 @@
+---
+import DirectionDetailPage from "../../components/DirectionDetailPage.astro";
+import { panels, type DirectionPanel } from "../../data/directions";
+import Layout from "../../layouts/Layout.astro";
+
+export function getStaticPaths() {
+  return panels.map((panel) => ({ params: { id: panel.id }, props: { panel } }));
+}
+
+interface Props {
+  panel: DirectionPanel;
+}
+
+const { panel } = Astro.props;
+---
+
+<Layout title={`${panel.title} — Interactive Web`}>
+  <main class="presentation-page presentation-page--detail" data-page-accent={panel.accent}>
+    <div class="ambient ambient--one" aria-hidden="true"></div>
+    <div class="ambient ambient--two" aria-hidden="true"></div>
+
+    <section class="presentation-shell">
+      <DirectionDetailPage panel={panel} />
+    </section>
+  </main>
+</Layout>

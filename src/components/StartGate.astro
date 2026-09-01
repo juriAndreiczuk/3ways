@@ -1,0 +1,142 @@
+---
+import logo from "../assets/logo.svg";
+---
+
+<script is:inline>
+  (() => {
+    try {
+      document.documentElement.dataset.introStarted =
+        window.localStorage.getItem("interactive-web:intro-started") === "true"
+          ? "true"
+          : "false";
+    } catch {
+      document.documentElement.dataset.introStarted = "false";
+    }
+  })();
+</script>
+
+<div class="start-gate" data-start-gate>
+  <div class="start-gate__particles" aria-hidden="true">
+    <i style="--x: 6%; --y: 14%; --dx: 9vw; --dy: 13vh; --size: 0.22rem; --delay: -1s; --duration: 8s"></i>
+    <i style="--x: 18%; --y: 72%; --dx: -8vw; --dy: -15vh; --size: 0.14rem; --delay: -4s; --duration: 11s"></i>
+    <i style="--x: 27%; --y: 31%; --dx: 12vw; --dy: -8vh; --size: 0.3rem; --delay: -7s; --duration: 13s"></i>
+    <i style="--x: 38%; --y: 84%; --dx: -13vw; --dy: 7vh; --size: 0.16rem; --delay: -2s; --duration: 10s"></i>
+    <i style="--x: 48%; --y: 10%; --dx: 7vw; --dy: 17vh; --size: 0.18rem; --delay: -6s; --duration: 12s"></i>
+    <i style="--x: 58%; --y: 65%; --dx: -10vw; --dy: -12vh; --size: 0.24rem; --delay: -9s; --duration: 9s"></i>
+    <i style="--x: 69%; --y: 23%; --dx: 11vw; --dy: 10vh; --size: 0.14rem; --delay: -3s; --duration: 14s"></i>
+    <i style="--x: 78%; --y: 78%; --dx: -7vw; --dy: -14vh; --size: 0.28rem; --delay: -8s; --duration: 12s"></i>
+    <i style="--x: 89%; --y: 42%; --dx: 8vw; --dy: 8vh; --size: 0.16rem; --delay: -5s; --duration: 10s"></i>
+    <i style="--x: 95%; --y: 88%; --dx: -12vw; --dy: -9vh; --size: 0.2rem; --delay: -10s; --duration: 15s"></i>
+    <i style="--x: 12%; --y: 47%; --dx: 14vw; --dy: -6vh; --size: 0.12rem; --delay: -12s; --duration: 13s"></i>
+    <i style="--x: 84%; --y: 12%; --dx: -10vw; --dy: 18vh; --size: 0.12rem; --delay: -11s; --duration: 11s"></i>
+  </div>
+  <button class="start-button" type="button" data-start-button aria-label="Rozpocznij prezentację">
+    <span class="start-button__aura" aria-hidden="true"></span>
+    <span class="start-button__orbit start-button__orbit--outer" aria-hidden="true"></span>
+    <span class="start-button__orbit start-button__orbit--inner" aria-hidden="true"></span>
+    <span class="start-button__core">
+      <img src={logo.src} alt="" />
+    </span>
+  </button>
+</div>
+
+<script>
+  import { gsap } from "gsap";
+
+  const storageKey = "interactive-web:intro-started";
+  let startGateCleanup: (() => void) | undefined;
+  let startTimeline: gsap.core.Timeline | undefined;
+
+  const hasStarted = () => {
+    try {
+      return window.localStorage.getItem(storageKey) === "true";
+    } catch {
+      return false;
+    }
+  };
+
+  const initialiseStartGate = () => {
+    startGateCleanup?.();
+    startGateCleanup = undefined;
+    startTimeline?.kill();
+    startTimeline = undefined;
+
+    const gate = document.querySelector<HTMLElement>("[data-start-gate]");
+    const button = gate?.querySelector<HTMLButtonElement>("[data-start-button]");
+    const intro = document.querySelector<HTMLElement>("[data-intro-content]");
+    if (!gate || !button || !intro) return;
+
+    if (hasStarted()) {
+      document.documentElement.dataset.introStarted = "true";
+      gsap.set(gate, { display: "none" });
+      gsap.set(intro, { clearProps: "all" });
+      return;
+    }
+
+    document.documentElement.dataset.introStarted = "false";
+    gsap.set(gate, { display: "grid", opacity: 1 });
+    gsap.set(intro, { autoAlpha: 0 });
+
+    const handleStart = () => {
+      if (button.disabled) return;
+      button.disabled = true;
+      try {
+        window.localStorage.setItem(storageKey, "true");
+      } catch {
+        // The transition still works when browser storage is unavailable.
+      }
+
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        document.documentElement.dataset.introStarted = "true";
+        gate.style.display = "none";
+        gsap.set(intro, { clearProps: "all" });
+        return;
+      }
+
+      const orbits = button.querySelectorAll<HTMLElement>(".start-button__orbit");
+      const core = button.querySelector<HTMLElement>(".start-button__core");
+      const aura = button.querySelector<HTMLElement>(".start-button__aura");
+
+      orbits.forEach((orbit) => {
+        const currentTransform = window.getComputedStyle(orbit).transform;
+        orbit.style.animation = "none";
+        orbit.style.transform = currentTransform;
+      });
+
+      startTimeline = gsap.timeline({ defaults: { ease: "power3.inOut" } });
+      startTimeline
+        .to(orbits, { scale: 1.7, rotation: "+=150", opacity: 0, duration: 0.8, stagger: 0.08 }, 0)
+        .to(aura, { scale: 2.1, opacity: 0.9, duration: 0.55, ease: "power2.out" }, 0.12)
+        .to(core, { scale: 0.72, opacity: 0, filter: "blur(14px)", duration: 0.6 }, 0.18)
+        .to(button, { scale: 1.08, opacity: 0, duration: 0.5 }, 0.42)
+        .to(gate, { opacity: 0, duration: 0.55 }, 0.56)
+        .add(() => {
+          document.documentElement.dataset.introStarted = "true";
+          gate.style.display = "none";
+        })
+        .fromTo(
+          intro,
+          { autoAlpha: 0, scale: 0.985, filter: "blur(10px)" },
+          { autoAlpha: 1, scale: 1, filter: "blur(0px)", duration: 1.05, ease: "power3.out" },
+        );
+      startTimeline.timeScale(0.65);
+    };
+
+    button.addEventListener("click", handleStart);
+    startGateCleanup = () => {
+      button.removeEventListener("click", handleStart);
+      startTimeline?.kill();
+      startTimeline = undefined;
+    };
+  };
+
+  const cleanupStartGate = () => {
+    startGateCleanup?.();
+    startGateCleanup = undefined;
+    startTimeline?.kill();
+    startTimeline = undefined;
+  };
+
+  document.addEventListener("astro:page-load", initialiseStartGate);
+  document.addEventListener("astro:before-swap", cleanupStartGate);
+</script>

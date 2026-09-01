@@ -1,0 +1,270 @@
+<canvas
+  class="mystery-question-layer"
+  data-mystery-question-layer
+  aria-hidden="true"
+></canvas>
+
+<script>
+  import * as THREE from "three";
+
+  interface QuestionMark {
+    card: HTMLElement;
+    trigger: HTMLElement;
+    scene: THREE.Scene;
+    camera: THREE.PerspectiveCamera;
+    group: THREE.Group;
+    shell: THREE.LineBasicMaterial;
+    halo: THREE.SpriteMaterial;
+    opacity: number;
+  }
+
+  let mysteryCleanup: (() => void) | undefined;
+
+  const initialiseMysteryQuestions = () => {
+    mysteryCleanup?.();
+    mysteryCleanup = undefined;
+    const canvas = document.querySelector<HTMLCanvasElement>("[data-mystery-question-layer]");
+    const grid = canvas?.closest<HTMLElement>(".direction-grid");
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!canvas || !grid) return;
+
+    try {
+      const renderer = new THREE.WebGLRenderer({
+        canvas,
+        alpha: true,
+        antialias: true,
+        powerPreference: "high-performance",
+      });
+      renderer.setClearColor(0x000000, 0);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.25));
+      renderer.setScissorTest(true);
+
+      const questionColour = 0xa855f7;
+
+      const createHaloTexture = () => {
+        const haloCanvas = document.createElement("canvas");
+        haloCanvas.width = 128;
+        haloCanvas.height = 128;
+        const context = haloCanvas.getContext("2d");
+        if (!context) return new THREE.Texture();
+        const gradient = context.createRadialGradient(64, 64, 0, 64, 64, 64);
+        gradient.addColorStop(0, "rgba(255,255,255,.48)");
+        gradient.addColorStop(0.18, "rgba(255,255,255,.2)");
+        gradient.addColorStop(0.52, "rgba(255,255,255,.055)");
+        gradient.addColorStop(1, "rgba(255,255,255,0)");
+        context.fillStyle = gradient;
+        context.fillRect(0, 0, 128, 128);
+        const texture = new THREE.CanvasTexture(haloCanvas);
+        texture.needsUpdate = true;
+        return texture;
+      };
+
+      const haloTexture = createHaloTexture();
+      const cards = Array.from(grid.querySelectorAll<HTMLElement>("[data-reveal-card]"));
+      const marks: QuestionMark[] = cards.flatMap((card) => {
+        if (
+          card.dataset.revealed === "true" ||
+          card.dataset.gateLocked === "true"
+        )
+          return [];
+        const trigger = card.querySelector<HTMLElement>("[data-reveal-trigger]");
+        if (!trigger) return [];
+
+        const colour = questionColour;
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(34, 1, 0.1, 20);
+        camera.position.set(0, 0, 4.2);
+
+        const curve = new THREE.CurvePath<THREE.Vector3>();
+        curve.add(
+          new THREE.CubicBezierCurve3(
+            new THREE.Vector3(-0.48, 0.36, 0),
+            new THREE.Vector3(-0.42, 0.92, 0),
+            new THREE.Vector3(0.52, 0.88, 0),
+            new THREE.Vector3(0.5, 0.3, 0),
+          ),
+        );
+        curve.add(
+          new THREE.CubicBezierCurve3(
+            new THREE.Vector3(0.5, 0.3, 0),
+            new THREE.Vector3(0.48, -0.06, 0),
+            new THREE.Vector3(0.04, 0.02, 0),
+            new THREE.Vector3(0.04, -0.34, 0),
+          ),
+        );
+
+        const questionGeometry = new THREE.TubeGeometry(curve, 26, 0.13, 5, false);
+        const dotGeometry = new THREE.IcosahedronGeometry(0.15, 0);
+        const bodyMaterial = new THREE.MeshBasicMaterial({
+          color: 0x190b2a,
+          transparent: true,
+          opacity: 0.76,
+          depthWrite: true,
+          polygonOffset: true,
+          polygonOffsetFactor: 1,
+          polygonOffsetUnits: 1,
+        });
+        const shell = new THREE.LineBasicMaterial({
+          color: colour,
+          transparent: true,
+          opacity: 0.82,
+          blending: THREE.NormalBlending,
+          depthWrite: false,
+        });
+
+        const group = new THREE.Group();
+        const body = new THREE.Mesh(questionGeometry, bodyMaterial);
+        const dot = new THREE.Mesh(dotGeometry, bodyMaterial);
+        const bodyShell = new THREE.LineSegments(
+          new THREE.EdgesGeometry(questionGeometry, 7),
+          shell,
+        );
+        const dotShell = new THREE.LineSegments(
+          new THREE.EdgesGeometry(dotGeometry, 5),
+          shell,
+        );
+        bodyShell.scale.setScalar(1.018);
+        dot.position.y = -0.68;
+        dotShell.position.y = -0.68;
+        dotShell.scale.setScalar(1.025);
+        body.renderOrder = 0;
+        dot.renderOrder = 0;
+        bodyShell.renderOrder = 1;
+        dotShell.renderOrder = 1;
+        group.add(body, dot, bodyShell, dotShell);
+        scene.add(group);
+
+        const halo = new THREE.SpriteMaterial({
+          map: haloTexture,
+          color: colour,
+          transparent: true,
+          opacity: 0.25,
+          blending: THREE.AdditiveBlending,
+          depthWrite: false,
+        });
+        const haloSprite = new THREE.Sprite(halo);
+        haloSprite.scale.set(2.35, 2.35, 1);
+        scene.add(haloSprite);
+
+        card.dataset.threeQuestionReady = "true";
+        return [{ card, trigger, scene, camera, group, shell, halo, opacity: 1 }];
+      });
+
+      const resize = () => {
+        const width = Math.max(grid.clientWidth, 1);
+        const height = Math.max(grid.clientHeight, 1);
+        renderer.setSize(width, height, false);
+      };
+      const resizeObserver = new ResizeObserver(resize);
+      resizeObserver.observe(grid);
+      resize();
+
+      let elapsed = 0;
+      let previousTime = performance.now();
+      let lastRendered = 0;
+      let frameId = 0;
+      let running = false;
+      const frameInterval = 1000 / 24;
+
+      const render = (time: number) => {
+        if (!running) return;
+        frameId = requestAnimationFrame(render);
+        if (time - lastRendered < frameInterval) return;
+
+        const delta = Math.min((time - previousTime) / 1000, 0.08);
+        previousTime = time;
+        lastRendered = time;
+        elapsed += delta;
+
+        renderer.setScissorTest(false);
+        renderer.clear();
+        renderer.setScissorTest(true);
+        const canvasBounds = canvas.getBoundingClientRect();
+
+        marks.forEach((mark, index) => {
+          const animating = mark.card.dataset.animating === "true";
+          const revealed = mark.card.dataset.revealed === "true";
+          const targetOpacity = animating || revealed ? 0 : 1;
+          mark.opacity = THREE.MathUtils.damp(mark.opacity, targetOpacity, 10.5, delta);
+          if (mark.opacity < 0.012 && (animating || revealed)) {
+            mark.opacity = 0;
+            mark.shell.opacity = 0;
+            mark.halo.opacity = 0;
+            return;
+          }
+
+          if (!reducedMotion) {
+            mark.group.rotation.y += delta * (animating ? 5.2 : 0.7);
+            mark.group.rotation.x = Math.sin(elapsed * 0.48 + index) * 0.12;
+            mark.group.position.y = Math.sin(elapsed * 0.72 + index * 1.8) * 0.035;
+          }
+
+          const pulse = 0.9 + Math.sin(elapsed * 1.25 + index * 1.7) * 0.1;
+          mark.shell.opacity = mark.opacity * 0.82;
+          mark.halo.opacity = mark.opacity * mark.opacity * 0.25 * pulse;
+
+          const bounds = mark.trigger.getBoundingClientRect();
+          const x = bounds.left - canvasBounds.left;
+          const y = canvasBounds.height - (bounds.bottom - canvasBounds.top);
+          if (bounds.width <= 0 || bounds.height <= 0) return;
+
+          mark.camera.aspect = bounds.width / bounds.height;
+          mark.camera.updateProjectionMatrix();
+          renderer.setViewport(x, y, bounds.width, bounds.height);
+          renderer.setScissor(x, y, bounds.width, bounds.height);
+          renderer.render(mark.scene, mark.camera);
+        });
+      };
+
+      const start = () => {
+        if (running || document.hidden) return;
+        running = true;
+        previousTime = performance.now();
+        frameId = requestAnimationFrame(render);
+      };
+      const stop = () => {
+        running = false;
+        cancelAnimationFrame(frameId);
+      };
+      const visibilityObserver = new IntersectionObserver(
+        ([entry]) => (entry?.isIntersecting ? start() : stop()),
+        { threshold: 0.04 },
+      );
+      visibilityObserver.observe(grid);
+      const handleVisibility = () => (document.hidden ? stop() : start());
+      document.addEventListener("visibilitychange", handleVisibility);
+      mysteryCleanup = () => {
+        stop();
+        resizeObserver.disconnect();
+        visibilityObserver.disconnect();
+        document.removeEventListener("visibilitychange", handleVisibility);
+        marks.forEach((mark) => {
+          mark.scene.traverse((object) => {
+            if (object instanceof THREE.Mesh || object instanceof THREE.LineSegments) {
+              object.geometry?.dispose();
+              const materials = Array.isArray(object.material) ? object.material : [object.material];
+              materials.forEach((material) => material?.dispose());
+            }
+          });
+          mark.halo.dispose();
+        });
+        haloTexture.dispose();
+        renderer.dispose();
+      };
+    } catch {
+      canvas.hidden = true;
+    }
+  };
+
+  const cleanupMysteryQuestions = () => {
+    mysteryCleanup?.();
+    mysteryCleanup = undefined;
+  };
+
+  document.addEventListener("astro:page-load", initialiseMysteryQuestions);
+  document.addEventListener(
+    "interactive-web:reveal-gate-updated",
+    initialiseMysteryQuestions,
+  );
+  document.addEventListener("astro:before-swap", cleanupMysteryQuestions);
+</script>

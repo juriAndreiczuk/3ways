@@ -1,0 +1,89 @@
+<div class="viewport-warning" role="alert">
+  <div class="viewport-warning__mark" aria-hidden="true">1280</div>
+  <p class="viewport-warning__eyebrow">Interactive Web</p>
+  <h1>Ekran jest zbyt mały</h1>
+  <p>Otwórz aplikację na ekranie o szerokości co najmniej 1280 px.</p>
+</div>
+
+<style>
+  .viewport-warning {
+    display: none;
+  }
+
+  @media (max-width: 1279px) {
+    :global(body > :not(.viewport-warning)) {
+      display: none !important;
+    }
+
+    .viewport-warning {
+      position: fixed;
+      z-index: 9999;
+      inset: 0;
+      display: grid;
+      place-content: center;
+      justify-items: center;
+      gap: 0.7rem;
+      padding: 2rem;
+      overflow: hidden;
+      text-align: center;
+      background:
+        radial-gradient(circle at 50% 42%, rgba(91, 33, 182, 0.2), transparent 24rem),
+        #03040d;
+      color: #f5f3ff;
+    }
+
+    .viewport-warning::before {
+      position: absolute;
+      pointer-events: none;
+      content: "";
+    }
+
+    .viewport-warning::before {
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(113, 91, 181, 0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(113, 91, 181, 0.08) 1px, transparent 1px);
+      background-size: 3rem 3rem;
+      mask-image: radial-gradient(circle at center, #000, transparent 72%);
+    }
+
+    .viewport-warning > * {
+      position: relative;
+      z-index: 1;
+      margin: 0;
+    }
+
+    .viewport-warning__mark {
+      display: grid;
+      width: 6rem;
+      height: 6rem;
+      place-items: center;
+      border: 1px solid rgba(167, 139, 250, 0.58);
+      border-radius: 1.5rem;
+      color: #a78bfa;
+      font-size: 0.75rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      box-shadow: 0 0 2rem rgba(124, 58, 237, 0.22);
+    }
+
+    .viewport-warning__eyebrow {
+      color: #a78bfa;
+      font-size: 0.68rem;
+      font-weight: 800;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+    }
+
+    .viewport-warning h1 {
+      font-size: clamp(1.7rem, 5vw, 2.6rem);
+      line-height: 1.1;
+    }
+
+    .viewport-warning p:last-child {
+      max-width: 28rem;
+      color: #aaa7c0;
+      line-height: 1.6;
+    }
+  }
+</style>
