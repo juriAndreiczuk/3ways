@@ -12,7 +12,10 @@ import Layout from "../layouts/Layout.astro";
     <StartGate />
 
     <section class="presentation-shell presentation-shell--intro" data-intro-content>
-      <PresentationRoute current="intro" />
+      <PresentationRoute
+        current="intro"
+        inlineStyle="width: 100%; margin-top: -2rem; margin-bottom: 2rem;"
+      />
       <IntroSection />
     </section>
   </main>

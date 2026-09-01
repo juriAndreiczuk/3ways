@@ -57,12 +57,7 @@ body {
   display: grid;
   align-content: start;
   align-items: flex-start;
-  row-gap: 2rem;
-}
-
-.presentation-shell--intro .presentation-route {
-  width: 100%;
-  margin-top: -2rem;
+  row-gap: 0;
 }
 
 html:not([data-intro-started="true"]) [data-intro-content] {
