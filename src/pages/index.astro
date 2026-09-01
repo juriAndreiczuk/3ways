@@ -1,5 +1,6 @@
 ---
 import IntroSection from "../components/IntroSection.astro";
+import PresentationRoute from "../components/PresentationRoute.astro";
 import StartGate from "../components/StartGate.astro";
 import Layout from "../layouts/Layout.astro";
 ---
@@ -11,6 +12,7 @@ import Layout from "../layouts/Layout.astro";
     <StartGate />
 
     <section class="presentation-shell presentation-shell--intro" data-intro-content>
+      <PresentationRoute current="intro" />
       <IntroSection />
     </section>
   </main>

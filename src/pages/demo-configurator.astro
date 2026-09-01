@@ -2,6 +2,7 @@
 import CourseConfigurator from "../components/demo-configurator/CourseConfigurator";
 import { courseConfigurator } from "../data/courseConfigurator";
 import ViewportWarning from "../components/ViewportWarning.astro";
+import PresentationRoute from "../components/PresentationRoute.astro";
 
 const baseUrl = import.meta.env.BASE_URL.replace(/\/?$/, "/");
 ---
@@ -16,6 +17,7 @@ const baseUrl = import.meta.env.BASE_URL.replace(/\/?$/, "/");
     <title>{courseConfigurator.config.title}</title>
   </head>
   <body>
+    <PresentationRoute current="demo" />
     <main>
       <CourseConfigurator client:load />
     </main>

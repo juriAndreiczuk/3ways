@@ -1,16 +1,19 @@
 ---
 import { ClientRouter } from "astro:transitions";
 import ViewportWarning from "../components/ViewportWarning.astro";
+import PresentationRoute, { type PresentationStage } from "../components/PresentationRoute.astro";
 import "../styles/global.css";
 
 interface Props {
   title?: string;
   description?: string;
+  presentationStage?: PresentationStage;
 }
 
 const {
   title = "Interactive Web — Mapa rozmowy",
   description = "Trzy kierunki rozwoju interaktywnych doświadczeń webowych.",
+  presentationStage,
 } = Astro.props;
 const baseUrl = import.meta.env.BASE_URL.replace(/\/?$/, "/");
 ---
@@ -28,6 +31,7 @@ const baseUrl = import.meta.env.BASE_URL.replace(/\/?$/, "/");
     <ClientRouter />
   </head>
   <body>
+    {presentationStage && <PresentationRoute current={presentationStage} />}
     <slot />
     <ViewportWarning />
   </body>

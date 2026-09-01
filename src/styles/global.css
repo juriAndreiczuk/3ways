@@ -49,12 +49,19 @@ body {
   width: min(100% - 3rem, 1384px);
   min-height: 100vh;
   margin: 0 auto;
-  padding: 2.5rem 0 3rem;
+  padding: 2rem 0 3rem;
 }
 
 .presentation-shell--intro {
   display: grid;
-  align-items: center;
+  align-content: start;
+  align-items: flex-start;
+  row-gap: 2rem;
+}
+
+.presentation-shell--intro .presentation-route {
+  width: 100%;
+  margin-top: -2rem;
 }
 
 html:not([data-intro-started="true"]) [data-intro-content] {
@@ -371,7 +378,7 @@ html[data-intro-started="true"] .start-gate {
 }
 
 .presentation-page--directions .section-heading {
-  margin-top: 2.75rem;
+  margin-top: .5rem;
 }
 
 .back-link {
