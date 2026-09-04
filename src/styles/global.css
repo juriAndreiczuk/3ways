@@ -70,6 +70,9 @@ html[data-intro-started="true"] .start-gate {
   display: none;
 }
 
+html:not([data-access-granted="true"]) .start-button { visibility: hidden; }
+html[data-access-granted="true"] .start-gate__access { visibility: hidden; }
+
 .viewport-warning {
   display: none;
 }
@@ -185,6 +188,26 @@ html[data-intro-started="true"] .start-gate {
   animation: start-gate-particle-drift var(--duration) ease-in-out var(--delay) infinite alternate;
 }
 
+.start-gate__access {
+  grid-area: 1 / 1;
+  position: relative;
+  z-index: 2;
+  display: grid;
+  width: min(100% - 3rem, 21rem);
+  gap: .9rem;
+  padding: 1.65rem;
+  border: 1px solid rgba(139,92,246,.35);
+  border-radius: 1.25rem;
+  background: rgba(8,9,27,.72);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.06), 0 1.5rem 4rem rgba(0,0,0,.3);
+  backdrop-filter: blur(16px);
+}
+.start-gate__access > span { color: #b6a4eb; font-size: .59rem; font-weight: 800; letter-spacing: .2em; }
+.start-gate__access label { display: grid; gap: .45rem; }.start-gate__access label > span { color: #718096; font-size: .55rem; font-weight: 800; letter-spacing: .16em; }
+.start-gate__access input { width: 100%; min-height: 2.9rem; padding: 0 .85rem; border: 1px solid rgba(139,92,246,.28); border-radius: .65rem; outline: 0; color: #f5f3ff; background: rgba(4,5,18,.68); font: inherit; }.start-gate__access input:focus { border-color: rgba(34,211,238,.75); box-shadow: 0 0 0 .2rem rgba(34,211,238,.1); }
+.start-gate__access button { min-height: 2.8rem; border: 1px solid rgba(139,92,246,.5); border-radius: .65rem; color: #f5f3ff; background: linear-gradient(100deg, rgba(109,40,217,.82), rgba(37,99,235,.72)); font: inherit; font-size: .61rem; font-weight: 800; letter-spacing: .15em; cursor: pointer; }.start-gate__access button:hover { filter: brightness(1.16); }
+.start-gate__access p { min-height: .9rem; margin: -.2rem 0 0; color: #fda4af; font-size: .67rem; }
+
 @keyframes start-gate-particle-drift {
   from {
     transform: translate3d(0, 0, 0) scale(0.78);
@@ -197,6 +220,7 @@ html[data-intro-started="true"] .start-gate {
 }
 
 .start-button {
+  grid-area: 1 / 1;
   position: relative;
   isolation: isolate;
   z-index: 1;

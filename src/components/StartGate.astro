@@ -5,8 +5,10 @@ import logo from "../assets/logo.svg";
 <script is:inline>
   (() => {
     try {
+      const accessGranted = window.localStorage.getItem("interactive-web:access-granted") === "true";
+      document.documentElement.dataset.accessGranted = accessGranted ? "true" : "false";
       document.documentElement.dataset.introStarted =
-        window.localStorage.getItem("interactive-web:intro-started") === "true"
+        window.localStorage.getItem("interactive-web:intro-started") === "true" && accessGranted
           ? "true"
           : "false";
     } catch {
@@ -30,6 +32,15 @@ import logo from "../assets/logo.svg";
     <i style="--x: 12%; --y: 47%; --dx: 14vw; --dy: -6vh; --size: 0.12rem; --delay: -12s; --duration: 13s"></i>
     <i style="--x: 84%; --y: 12%; --dx: -10vw; --dy: 18vh; --size: 0.12rem; --delay: -11s; --duration: 11s"></i>
   </div>
+  <form class="start-gate__access" data-access-form>
+    <span>DOSTĘP PRYWATNY</span>
+    <label>
+      <span>HASŁO</span>
+      <input type="password" name="password" autocomplete="current-password" data-access-input required />
+    </label>
+    <button type="submit">WEJDŹ</button>
+    <p data-access-error aria-live="polite"></p>
+  </form>
   <button class="start-button" type="button" data-start-button aria-label="Rozpocznij prezentację">
     <span class="start-button__aura" aria-hidden="true"></span>
     <span class="start-button__orbit start-button__orbit--outer" aria-hidden="true"></span>
@@ -44,12 +55,14 @@ import logo from "../assets/logo.svg";
   import { gsap } from "gsap";
 
   const storageKey = "interactive-web:intro-started";
+  const accessKey = "interactive-web:access-granted";
+  const password = "wskz";
   let startGateCleanup: (() => void) | undefined;
   let startTimeline: gsap.core.Timeline | undefined;
 
   const hasStarted = () => {
     try {
-      return window.localStorage.getItem(storageKey) === "true";
+      return window.localStorage.getItem(storageKey) === "true" && window.localStorage.getItem(accessKey) === "true";
     } catch {
       return false;
     }
@@ -63,8 +76,11 @@ import logo from "../assets/logo.svg";
 
     const gate = document.querySelector<HTMLElement>("[data-start-gate]");
     const button = gate?.querySelector<HTMLButtonElement>("[data-start-button]");
+    const accessForm = gate?.querySelector<HTMLFormElement>("[data-access-form]");
+    const accessInput = gate?.querySelector<HTMLInputElement>("[data-access-input]");
+    const accessError = gate?.querySelector<HTMLElement>("[data-access-error]");
     const intro = document.querySelector<HTMLElement>("[data-intro-content]");
-    if (!gate || !button || !intro) return;
+    if (!gate || !button || !accessForm || !accessInput || !intro) return;
 
     if (hasStarted()) {
       document.documentElement.dataset.introStarted = "true";
@@ -76,6 +92,30 @@ import logo from "../assets/logo.svg";
     document.documentElement.dataset.introStarted = "false";
     gsap.set(gate, { display: "grid", opacity: 1 });
     gsap.set(intro, { autoAlpha: 0 });
+
+    const hasAccess = () => {
+      try { return window.localStorage.getItem(accessKey) === "true"; } catch { return false; }
+    };
+    const handleAccess = (event: SubmitEvent) => {
+      event.preventDefault();
+      if (accessInput.value !== password) {
+        if (accessError) accessError.textContent = "Nieprawidłowe hasło";
+        accessInput.select();
+        return;
+      }
+      try { window.localStorage.setItem(accessKey, "true"); } catch { /* The session still continues. */ }
+      document.documentElement.dataset.accessGranted = "true";
+      if (accessError) accessError.textContent = "";
+      gsap.to(accessForm, { autoAlpha: 0, duration: 0.22, onComplete: () => gsap.set(accessForm, { display: "none" }) });
+      gsap.fromTo(button, { autoAlpha: 0, scale: 0.9 }, { autoAlpha: 1, scale: 1, duration: 0.45, ease: "power2.out" });
+    };
+    if (hasAccess()) {
+      gsap.set(accessForm, { display: "none" });
+      gsap.set(button, { autoAlpha: 1 });
+    } else {
+      gsap.set(button, { autoAlpha: 0 });
+      accessForm.addEventListener("submit", handleAccess);
+    }
 
     const handleStart = () => {
       if (button.disabled) return;
@@ -124,6 +164,7 @@ import logo from "../assets/logo.svg";
 
     button.addEventListener("click", handleStart);
     startGateCleanup = () => {
+      accessForm.removeEventListener("submit", handleAccess);
       button.removeEventListener("click", handleStart);
       startTimeline?.kill();
       startTimeline = undefined;
