@@ -261,17 +261,6 @@
       composer.addPass(bloomPass);
       composer.addPass(new OutputPass());
 
-      const pointer = new THREE.Vector2();
-      const targetPointer = new THREE.Vector2();
-      host.addEventListener("pointermove", (event) => {
-        const bounds = host.getBoundingClientRect();
-        targetPointer.set(
-          ((event.clientX - bounds.left) / bounds.width - 0.5) * 2,
-          -((event.clientY - bounds.top) / bounds.height - 0.5) * 2,
-        );
-      });
-      host.addEventListener("pointerleave", () => targetPointer.set(0, 0));
-
       const resize = () => {
         const width = Math.max(host.clientWidth, 1);
         const height = Math.max(host.clientHeight, 1);
@@ -310,6 +299,12 @@
             ? "Wyłącz współpracę"
             : "Włącz współpracę";
         }
+        host.dispatchEvent(
+          new CustomEvent("intro:collaborationchange", {
+            bubbles: true,
+            detail: { active: collaborationActive },
+          }),
+        );
       });
 
       const updateFlow = (
@@ -393,11 +388,10 @@
         forwardArrow.scale.setScalar(1 + collaboration * 0.2);
         reverseArrow.scale.setScalar(0.75 + collaboration * 0.45);
 
-        pointer.lerp(targetPointer, 0.045);
-        root.rotation.y = pointer.x * 0.12;
-        root.rotation.x = pointer.y * 0.07;
-        camera.position.x = pointer.x * 0.18;
-        camera.position.y = pointer.y * 0.12;
+        root.rotation.y = 0;
+        root.rotation.x = 0;
+        camera.position.x = 0;
+        camera.position.y = 0;
         camera.lookAt(0, 0, 0);
 
         composer.render();

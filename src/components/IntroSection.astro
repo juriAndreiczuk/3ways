@@ -7,136 +7,62 @@ const baseUrl = import.meta.env.BASE_URL.replace(/\/?$/, "/");
 <header class="intro-panel">
   <div class="intro-panel__grid" aria-hidden="true"></div>
 
-  <div class="relative z-10 grid gap-12 lg:grid-cols-2 lg:items-end">
-    <div>
-      <div
-        class="mb-8 flex items-center gap-2 text-[0.66rem] font-bold tracking-[0.24em] text-slate-500 uppercase"
-      >
-        <span class="h-px w-10 bg-violet-400"></span>
-        Interactive web
-      </div>
-
-      <h1
-        class="max-w-3xl text-7xl leading-none font-semibold tracking-[-0.01em] text-white mb-10"
-      >
-        Trzy rozwiązania
-        <span class="gradient-text"> szerokie zastosowanie</span>
-      </h1>
-      <div
-        class="conversation-flow"
-        data-conversation-flow
-        aria-label="Kontekst rozmowy"
-      >
-        <div class="conversation-flow__item" data-flow-item>
-          <span class="conversation-flow__number">01</span>
-          <p><strong>Współpraca</strong><small>Marketing + IT</small></p>
-        </div>
-        <div
-          class="conversation-flow__connector"
-          data-flow-connector
-          aria-hidden="true"
-        >
-          <span class="conversation-flow__track"></span>
-          <span class="conversation-flow__pulse"></span>
-          <svg viewBox="0 0 12 18"><path d="m3 3 6 6-6 6"></path></svg>
-        </div>
-        <div class="conversation-flow__item" data-flow-item>
-          <span class="conversation-flow__number">02</span>
-          <p>
-            <strong>Interactive web</strong><small>narzędzia i przykłady</small>
-          </p>
-        </div>
-        <div
-          class="conversation-flow__connector conversation-flow__connector--second"
-          data-flow-connector
-          aria-hidden="true"
-        >
-          <span class="conversation-flow__track"></span>
-          <span class="conversation-flow__pulse"></span>
-          <svg viewBox="0 0 12 18"><path d="m3 3 6 6-6 6"></path></svg>
-        </div>
-        <div
-          class="conversation-flow__item conversation-flow__item--active"
-          data-flow-item
-        >
-          <span class="conversation-flow__number">03</span>
-          <p>
-            <strong>Trzy rozwiązania</strong><small>nowe możliwośći</small>
-          </p>
-        </div>
-      </div>
-    </div>
-
-    <IntroThreeScene />
+  <div class="intro-panel__heading relative z-10">
+    <div class="intro-panel__eyebrow"><span></span>Interactive web</div>
+    <h1>Trzy kierunki. <span class="gradient-text">Szerokie zastosowanie.</span></h1>
   </div>
-
-  <div class="intro-route-action">
-    <div>
-      <span>NASTĘPNY ETAP</span>
-      <p>Trzy rozwiązania interaktywne</p>
-    </div>
-    <a
-      class="back-link back-link--forward intro-route-action__button"
-      href={baseUrl + "kierunki"}
-    >
-      <span class="back-link__copy">LISTA ROZWIĄZAŃ</span>
-      <span class="back-link__icon" aria-hidden="true">
-        <svg viewBox="0 0 18 18">
-          <path d="M3 9h11M10 5l4 4-4 4"></path>
-        </svg>
-      </span>
+  <div class="intro-panel__scenes relative z-10" data-collaboration-story>
+    <IntroThreeScene />
+    <aside class="intro-panel__aside">
+      <div class="intro-panel__copy">
+        <span class="intro-panel__copy-kicker">NOWA PERSPEKTYWA</span>
+        <p>Nowe narzędzia otwierają <em>nowe możliwości</em> w tworzeniu interaktywnych rozwiązań.</p>
+        <p>Od prostych elementów po rozbudowane rozwiązania.</p>
+      </div>
+      <div class="landing-stream" aria-label="Animowane przykłady landing page">
+        <div class="landing-stream__track" aria-hidden="true">
+          <div class="landing-card landing-card--one"><i></i><b></b><em></em></div>
+          <div class="landing-card landing-card--two"><i></i><b></b><em></em></div>
+          <div class="landing-card landing-card--three"><i></i><b></b><em></em></div>
+        </div>
+      </div>
+    </aside>
+    <a class="intro-panel__next-stage" href={baseUrl + "kierunki"}>
+      <span>LISTA ROZWIĄZAŃ</span>
+      <i aria-hidden="true"><svg viewBox="0 0 18 18"><path d="M3 9h11M10 5l4 4-4 4" /></svg></i>
     </a>
   </div>
 </header>
 
 <script>
-  import { gsap } from "gsap";
-
-  let conversationFlowTimeline: gsap.core.Timeline | undefined;
-
-  const initialiseConversationFlow = () => {
-    conversationFlowTimeline?.kill();
-    conversationFlowTimeline = undefined;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-
-    const flow = document.querySelector<HTMLElement>(
-      "[data-conversation-flow]",
-    );
-    if (!flow) return;
-    const items = flow.querySelectorAll<HTMLElement>("[data-flow-item]");
-    const connectors = flow.querySelectorAll<HTMLElement>(
-      "[data-flow-connector]",
-    );
-
-    conversationFlowTimeline = gsap.timeline({
-      defaults: { ease: "power3.out" },
-    });
-    conversationFlowTimeline
-      .from(flow, { opacity: 0, duration: 0.5 }, 0)
-      .from(
-        items,
-        { opacity: 0, filter: "blur(6px)", duration: 0.55, stagger: 0.18 },
-        0.1,
-      )
-      .from(
-        connectors,
-        {
-          opacity: 0,
-          scaleX: 0,
-          transformOrigin: "0% 50%",
-          duration: 0.5,
-          stagger: 0.18,
-        },
-        0.38,
-      );
-    conversationFlowTimeline.timeScale(0.5);
+  let cleanup: (() => void) | undefined;
+  let speedFrame = 0;
+  const initialiseStory = () => {
+    cleanup?.();
+    const story = document.querySelector<HTMLElement>("[data-collaboration-story]");
+    if (!story) return;
+    const onChange = (event: Event) => {
+      const active = (event as CustomEvent<{ active: boolean }>).detail.active;
+      story.toggleAttribute("data-collaboration", active);
+      const animations = [...story.querySelectorAll<HTMLElement>(".landing-card")]
+        .flatMap((card) => card.getAnimations());
+      cancelAnimationFrame(speedFrame);
+      const started = performance.now();
+      const targetRate = active ? 14 / 6 : 1;
+      const initialRates = animations.map((animation) => animation.playbackRate);
+      const updateRate = (time: number) => {
+        const progress = Math.min((time - started) / 700, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        animations.forEach((animation, index) => {
+          animation.playbackRate = initialRates[index] + (targetRate - initialRates[index]) * eased;
+        });
+        if (progress < 1) speedFrame = requestAnimationFrame(updateRate);
+      };
+      speedFrame = requestAnimationFrame(updateRate);
+    };
+    story.addEventListener("intro:collaborationchange", onChange);
+    cleanup = () => { cancelAnimationFrame(speedFrame); story.removeEventListener("intro:collaborationchange", onChange); };
   };
-
-  const cleanupConversationFlow = () => {
-    conversationFlowTimeline?.kill();
-    conversationFlowTimeline = undefined;
-  };
-
-  document.addEventListener("astro:page-load", initialiseConversationFlow);
-  document.addEventListener("astro:before-swap", cleanupConversationFlow);
+  document.addEventListener("astro:page-load", initialiseStory);
+  document.addEventListener("astro:before-swap", () => cleanup?.());
 </script>
