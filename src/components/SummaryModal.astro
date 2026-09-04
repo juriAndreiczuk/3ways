@@ -1,0 +1,49 @@
+<dialog class="summary-modal" data-summary-modal aria-labelledby="summary-modal-title">
+  <div class="summary-modal__panel">
+    <button class="summary-modal__close" type="button" data-summary-close aria-label="Zamknij podsumowanie">×</button>
+    <header class="summary-modal__header">
+      <span>PODSUMOWANIE</span>
+      <h2 id="summary-modal-title">Trzy kierunki. <em>Wspólny cel.</em></h2>
+      <p>Nowe narzędzia pomagają rozwijać platformy w sposób dopasowany do konkretnych potrzeb.</p>
+    </header>
+    <div class="summary-modal__grid">
+      <article class="summary-card summary-card--canvas" data-index="01">
+        <div class="summary-card__top"><div class="summary-card__icon" aria-hidden="true"><svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="5"/><circle cx="16" cy="16" r="12"/><path d="M16 1v5M16 26v5M1 16h5M26 16h5"/></svg></div><span>01 · CANVAS</span></div>
+        <h3>Elementy, które przyciągają uwagę.</h3>
+        <p>Interaktywne komponenty i sekcje dla istniejących platform. Pomagają zainteresować nowych kandydatów i podkreślają jakość oferty dla obecnych studentów.</p>
+        <small>ISTNIEJĄCA PLATFORMA</small>
+      </article>
+      <article class="summary-card summary-card--islands" data-index="02">
+        <div class="summary-card__top"><div class="summary-card__icon" aria-hidden="true"><svg viewBox="0 0 32 32"><rect x="4" y="4" width="24" height="24" rx="3"/><path d="M4 11h24M11 4v24M14 14h7v7h-7z"/></svg></div><span>02 · CANVAS + ISLANDS</span></div>
+        <h3>Landing pages nowej generacji.</h3>
+        <p>Połączenie Canvas i Islands pozwala tworzyć landing pages, które są nowoczesne, angażujące i szybkie. Łączą wyrazistą formę z treścią, która prowadzi użytkownika do działania.</p>
+        <small>NOWY LANDING</small>
+      </article>
+      <article class="summary-card summary-card--spa" data-index="03">
+        <div class="summary-card__top"><div class="summary-card__icon" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M4 23c4-1 6-6 10-6s6 6 10 6 4-4 5-5"/><path d="M5 27c3-1 5-3 8-3s5 3 8 3 5 3 8 3 5-3 7-3"/><circle cx="10" cy="10" r="4"/><circle cx="21" cy="8" r="5"/></svg></div><span>03 · CANVAS + MINI SPA</span></div>
+        <h3>Nowe powody, by trafić na platformy.</h3>
+        <p>Canvas i Mini SPA pozwalają budować dodatkowe narzędzia, które ułatwiają konkretne działania i poszerzają możliwości platformy.</p>
+        <small>DODATKOWE NARZĘDZIE</small>
+      </article>
+    </div>
+  </div>
+</dialog>
+
+<script>
+  let cleanup: (() => void) | undefined;
+  const initialiseSummaryModal = () => {
+    cleanup?.();
+    const dialog = document.querySelector<HTMLDialogElement>("[data-summary-modal]");
+    const close = dialog?.querySelector<HTMLButtonElement>("[data-summary-close]");
+    if (!dialog || !close) return;
+    const open = () => { if (!dialog.open) dialog.showModal(); };
+    const closeModal = () => dialog.close();
+    const closeOnBackdrop = (event: MouseEvent) => { if (event.target === dialog) dialog.close(); };
+    document.addEventListener("interactive-web:open-summary", open);
+    close.addEventListener("click", closeModal);
+    dialog.addEventListener("click", closeOnBackdrop);
+    cleanup = () => { document.removeEventListener("interactive-web:open-summary", open); close.removeEventListener("click", closeModal); dialog.removeEventListener("click", closeOnBackdrop); };
+  };
+  document.addEventListener("astro:page-load", initialiseSummaryModal);
+  document.addEventListener("astro:before-swap", () => cleanup?.());
+</script>

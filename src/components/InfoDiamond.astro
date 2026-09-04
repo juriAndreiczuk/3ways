@@ -1,0 +1,92 @@
+<button class="direction-info-diamond" type="button" data-info-diamond aria-label="Więcej informacji">
+  <canvas data-info-diamond-canvas aria-hidden="true"></canvas>
+  <span aria-hidden="true">i</span>
+</button>
+
+<script>
+  import * as THREE from "three";
+
+  let cleanup: (() => void) | undefined;
+
+  const initialiseDiamond = () => {
+    cleanup?.();
+    const host = document.querySelector<HTMLButtonElement>("[data-info-diamond]");
+    const canvas = host?.querySelector<HTMLCanvasElement>("[data-info-diamond-canvas]");
+    if (!host || !canvas) return;
+
+    const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(32, 1, 0.1, 20);
+    camera.position.z = 4.2;
+
+    const diamond = new THREE.Mesh(
+      new THREE.OctahedronGeometry(1, 1),
+      new THREE.MeshPhysicalMaterial({
+        color: 0x8b5cf6,
+        emissive: 0x2d0b6d,
+        emissiveIntensity: 0.7,
+        metalness: 0.35,
+        roughness: 0.18,
+        transparent: true,
+        opacity: 0.92,
+      }),
+    );
+    diamond.scale.set(0.86, 1.15, 0.86);
+    scene.add(diamond);
+    const wire = new THREE.LineSegments(
+      new THREE.EdgesGeometry(diamond.geometry),
+      new THREE.LineBasicMaterial({ color: 0x67e8f9, transparent: true, opacity: 0.8 }),
+    );
+    wire.scale.copy(diamond.scale);
+    scene.add(wire);
+    scene.add(new THREE.AmbientLight(0x8b5cf6, 1.6));
+    const light = new THREE.PointLight(0x67e8f9, 8, 10);
+    light.position.set(2, 2, 3);
+    scene.add(light);
+
+    const resize = () => {
+      const size = Math.max(host.clientWidth, 1);
+      renderer.setSize(size, size, false);
+      camera.aspect = 1;
+      camera.updateProjectionMatrix();
+    };
+    const observer = new ResizeObserver(resize);
+    observer.observe(host);
+    resize();
+    let hovered = false;
+    const enter = () => { hovered = true; };
+    const leave = () => { hovered = false; };
+    host.addEventListener("pointerenter", enter);
+    host.addEventListener("pointerleave", leave);
+    const openSummary = () => document.dispatchEvent(new CustomEvent("interactive-web:open-summary"));
+    host.addEventListener("click", openSummary);
+    let frame = 0;
+    const render = (time: number) => {
+      const pulse = 1 + Math.sin(time * 0.003) * 0.035 + (hovered ? 0.1 : 0);
+      diamond.rotation.y += hovered ? 0.035 : 0.009;
+      diamond.rotation.x += hovered ? 0.012 : 0.004;
+      diamond.scale.set(0.86 * pulse, 1.15 * pulse, 0.86 * pulse);
+      wire.rotation.copy(diamond.rotation);
+      wire.scale.copy(diamond.scale);
+      renderer.render(scene, camera);
+      frame = requestAnimationFrame(render);
+    };
+    frame = requestAnimationFrame(render);
+    cleanup = () => {
+      cancelAnimationFrame(frame);
+      observer.disconnect();
+      host.removeEventListener("pointerenter", enter);
+      host.removeEventListener("pointerleave", leave);
+      host.removeEventListener("click", openSummary);
+      diamond.geometry.dispose();
+      (diamond.material as THREE.Material).dispose();
+      (wire.geometry as THREE.BufferGeometry).dispose();
+      (wire.material as THREE.Material).dispose();
+      renderer.dispose();
+    };
+  };
+
+  document.addEventListener("astro:page-load", initialiseDiamond);
+  document.addEventListener("astro:before-swap", () => cleanup?.());
+</script>

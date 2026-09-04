@@ -1271,6 +1271,40 @@ a:focus-visible {
   animation: direction-connector-flow 3.8s linear infinite;
 }
 
+.direction-info-diamond {
+  position: absolute;
+  z-index: 8;
+  display: grid;
+  width: 4.4rem;
+  height: 4.4rem;
+  padding: 0;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+  opacity: 0;
+  transform: translate(-50%, -50%);
+  transition: opacity 400ms ease, filter 300ms ease;
+}
+
+.direction-info-diamond[style*="left"] { opacity: 1; }
+.direction-info-diamond:hover { filter: drop-shadow(0 0 14px rgba(34, 211, 238, .7)); }
+.direction-info-diamond canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.direction-info-diamond span { position: relative; z-index: 1; display: grid; width: 1.25rem; height: 1.25rem; place-items: center; border: 1px solid rgba(255,255,255,.72); border-radius: 50%; color: #f5f3ff; background: rgba(18, 12, 47, .48); font-family: Georgia, serif; font-size: .83rem; font-weight: 700; font-style: italic; line-height: 1; pointer-events: none; }
+
+.summary-modal { position: fixed; top: 50%; left: 50%; width: min(100% - 3rem, 73rem); max-width: none; max-height: calc(100dvh - 3rem); margin: 0; padding: 0; overflow: auto; border: 1px solid rgba(167,139,250,.46); border-radius: 1.65rem; color: #f8fafc; background: rgba(7,8,24,.68); box-shadow: 0 2rem 8rem rgba(0,0,0,.56), inset 0 1px 0 rgba(255,255,255,.09); backdrop-filter: blur(22px) saturate(125%); -webkit-backdrop-filter: blur(22px) saturate(125%); transform: translate(-50%, -50%); }
+.summary-modal[open] { animation: summary-modal-in .55s cubic-bezier(.16,1,.3,1) both; }
+.summary-modal::backdrop { background: rgba(2,3,12,.52); backdrop-filter: blur(5px); }
+.summary-modal__panel { position: relative; overflow: hidden; padding: clamp(2rem, 4vw, 4.4rem); background: radial-gradient(circle at 15% 0%, rgba(139,92,246,.2), transparent 30%), radial-gradient(circle at 95% 90%, rgba(34,211,238,.14), transparent 34%), rgba(8,9,27,.63); }
+.summary-modal__panel::before { position: absolute; inset: 0; content: ""; opacity: .42; pointer-events: none; background-image: linear-gradient(rgba(124,92,246,.06) 1px, transparent 1px), linear-gradient(90deg, rgba(124,92,246,.06) 1px, transparent 1px); background-size: 2.8rem 2.8rem; mask-image: radial-gradient(ellipse at center, #000, transparent 78%); }
+.summary-modal__header, .summary-modal__grid { position: relative; z-index: 1; }
+.summary-modal__header { position: relative; max-width: none; }.summary-modal__header > span { color: #9d8bd4; font-size: .61rem; font-weight: 800; letter-spacing: .2em; }.summary-modal__header h2 { margin: .75rem 0 1rem; font-size: clamp(2.5rem, 4.5vw, 4.7rem); line-height: .95; letter-spacing: -.06em; }.summary-modal__header h2 em { font-style: normal; color: transparent; background: linear-gradient(90deg,#b76bff,#577eff,#22d3ee); background-clip: text; -webkit-background-clip: text; }.summary-modal__header p { max-width: 46rem; margin: 0; color: #8d9ab0; font-size: .9rem; line-height: 1.7; }
+.summary-modal__close { position: absolute; z-index: 2; top: 1.3rem; right: 1.3rem; display: grid; width: 2.6rem; height: 2.6rem; place-items: center; border: 1px solid rgba(148,163,184,.25); border-radius: 50%; color: #dbeafe; background: rgba(15,16,37,.75); font-size: 1.45rem; line-height: 1; cursor: pointer; transition: border-color .25s ease, transform .25s ease; }.summary-modal__close:hover { border-color: rgba(34,211,238,.65); transform: rotate(90deg); }
+.summary-modal__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: clamp(2rem, 4vw, 3.8rem); }.summary-card { position: relative; display: flex; flex-direction: column; min-height: 18rem; padding: 1.4rem; overflow: hidden; border: 1px solid rgba(139,92,246,.3); border-radius: 1rem; background: linear-gradient(150deg, rgba(28,24,63,.66), rgba(5,8,20,.74)); box-shadow: inset 0 1px 0 rgba(255,255,255,.07); backdrop-filter: blur(10px); transition: transform .35s ease, border-color .35s ease, box-shadow .35s ease; }.summary-card::before { position: absolute; z-index: 0; right: -1.1rem; bottom: -2.1rem; color: rgba(167,139,250,.06); font-size: 8rem; font-weight: 800; line-height: 1; content: attr(data-index); }.summary-card:hover { border-color: rgba(196,181,253,.56); box-shadow: inset 0 0 35px rgba(139,92,246,.1), 0 1rem 2.5rem rgba(0,0,0,.22); transform: translateY(-.35rem); }.summary-modal[open] .summary-card { animation: summary-card-in .55s cubic-bezier(.16,1,.3,1) both; }.summary-modal[open] .summary-card:nth-child(2) { animation-delay: .09s; }.summary-modal[open] .summary-card:nth-child(3) { animation-delay: .18s; }.summary-card > * { position: relative; z-index: 1; }.summary-card__top { display: flex; align-items: center; gap: .85rem; }.summary-card__top > span { color: #b6a4eb; font-size: .7rem; font-weight: 800; letter-spacing: .11em; }.summary-card h3 { margin: 1.35rem 0 .75rem; font-size: 1.2rem; line-height: 1.12; letter-spacing: -.03em; }.summary-card p { margin: 0; color: #a4afc1; font-size: .76rem; line-height: 1.65; }.summary-card small { margin-top: auto; padding-top: 1rem; color: #a99ad1; font-size: .52rem; font-weight: 800; letter-spacing: .14em; }.summary-card__icon { display: grid; width: 3rem; height: 3rem; flex: 0 0 auto; place-items: center; border: 1px solid rgba(167,139,250,.42); border-radius: .75rem; color: #c4b5fd; background: rgba(91,33,182,.14); }.summary-card__icon svg { width: 1.7rem; height: 1.7rem; fill: none; stroke: currentColor; stroke-width: 1.35; stroke-linecap: round; stroke-linejoin: round; }.summary-card--islands { border-color: rgba(91,108,255,.32); }.summary-card--islands .summary-card__icon { color: #8da4ff; border-color: rgba(91,108,255,.42); background: rgba(45,60,170,.14); }.summary-card--spa { border-color: rgba(34,211,238,.3); }.summary-card--spa .summary-card__icon { color: #8be9f7; border-color: rgba(34,211,238,.4); background: rgba(8,145,178,.12); }.summary-card--spa small { color: #86e7f4; }
+@keyframes summary-modal-in { from { opacity: 0; transform: translate(-50%, calc(-50% + 1.5rem)) scale(.97); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+@keyframes summary-card-in { from { opacity: 0; transform: translateY(1.2rem); } to { opacity: 1; transform: translateY(0); } }
+
 @keyframes direction-connector-flow {
   to {
     stroke-dashoffset: -44;
@@ -1316,7 +1350,7 @@ a:focus-visible {
 
 .direction-card--demo {
   grid-column: 2;
-  margin-top: 6.5rem;
+  margin-top: 9rem;
 }
 
 .direction-card[data-gate-locked="true"] {
