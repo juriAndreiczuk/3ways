@@ -1,4 +1,4 @@
-<button class="direction-info-diamond" type="button" data-info-diamond aria-label="Więcej informacji">
+<button class="direction-info-diamond" type="button" data-info-diamond aria-label="Więcej informacji" disabled>
   <canvas data-info-diamond-canvas aria-hidden="true"></canvas>
   <span aria-hidden="true">i</span>
 </button>
@@ -45,6 +45,28 @@
     light.position.set(2, 2, 3);
     scene.add(light);
 
+    const readUnlocked = () => {
+      try {
+        const stored = window.localStorage.getItem("interactive-web:revealed-directions");
+        const revealed: unknown = stored ? JSON.parse(stored) : [];
+        const ids = [...document.querySelectorAll<HTMLElement>("[data-reveal-card]:not([data-reveal-gate])")]
+          .map((card) => card.dataset.directionCard)
+          .filter((id): id is string => Boolean(id));
+        return ids.length > 0 && Array.isArray(revealed) && ids.every((id) => revealed.includes(id));
+      } catch {
+        return false;
+      }
+    };
+    const setUnlocked = (unlocked: boolean) => {
+      host.disabled = !unlocked;
+      host.toggleAttribute("data-unlocked", unlocked);
+      (diamond.material as THREE.MeshPhysicalMaterial).color.setHex(unlocked ? 0x16a34a : 0xdc2626);
+      (diamond.material as THREE.MeshPhysicalMaterial).emissive.setHex(unlocked ? 0x075f2c : 0x5b101b);
+      (wire.material as THREE.LineBasicMaterial).color.setHex(unlocked ? 0x86efac : 0xfca5a5);
+      light.color.setHex(unlocked ? 0x86efac : 0xf87171);
+    };
+    setUnlocked(readUnlocked());
+
     const resize = () => {
       const size = Math.max(host.clientWidth, 1);
       renderer.setSize(size, size, false);
@@ -61,6 +83,8 @@
     host.addEventListener("pointerleave", leave);
     const openSummary = () => document.dispatchEvent(new CustomEvent("interactive-web:open-summary"));
     host.addEventListener("click", openSummary);
+    const unlock = () => setUnlocked(true);
+    document.addEventListener("interactive-web:reveal-gate-updated", unlock);
     let frame = 0;
     const render = (time: number) => {
       const pulse = 1 + Math.sin(time * 0.003) * 0.035 + (hovered ? 0.1 : 0);
@@ -79,6 +103,7 @@
       host.removeEventListener("pointerenter", enter);
       host.removeEventListener("pointerleave", leave);
       host.removeEventListener("click", openSummary);
+      document.removeEventListener("interactive-web:reveal-gate-updated", unlock);
       diamond.geometry.dispose();
       (diamond.material as THREE.Material).dispose();
       (wire.geometry as THREE.BufferGeometry).dispose();
